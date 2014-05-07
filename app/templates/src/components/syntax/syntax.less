@@ -1,0 +1,21 @@
+pre {
+	&.prettyprint {
+		// allow for horizontal scrolling within code examples
+		code {
+			white-space: pre;
+			word-wrap: normal;
+
+			// make comments faint
+			.com {
+				color: #998;
+			}
+		}
+
+		.linenums {
+			// fix missing line numbers bug
+			li {
+				list-style-type: inherit;
+			}
+		}
+	}
+}
