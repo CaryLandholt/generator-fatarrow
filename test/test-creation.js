@@ -20,8 +20,6 @@ describe('fatarrow generator', function () {
   it('creates expected files', function (done) {
     var expected = [
       // add files you expect to exist here.
-      '.jshintrc',
-      '.editorconfig'
     ];
 
     helpers.mockPrompt(this.app, {
