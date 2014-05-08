@@ -11,7 +11,7 @@
 		"type": "git",
 		"url": "CaryLandholt/generator-fatarrow"
 	},
-	"main": "app/index.js",
+	"main": "app/index",
 	"keywords": [
 		"yeoman-generator",
 		"fatarrow"
@@ -24,6 +24,7 @@
 		"chalk": "~0.4.0"
 	},
 	"devDependencies": {
+		"coffee-script": "~1.7.1",
 		"mocha": "*"
 	},
 	"peerDependencies": {
