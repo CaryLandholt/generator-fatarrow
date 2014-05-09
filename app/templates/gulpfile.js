@@ -3,4 +3,5 @@
 // CoffeeScript files natively.
 
 require('coffee-script').register();
-require('./gulpfile.coffee');
+
+module.exports = require('./gulpfile.coffee');

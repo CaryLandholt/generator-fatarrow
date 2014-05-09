@@ -1,7 +1,7 @@
 {
 	"name": "<%= _.slugify(appname) %>",
 	"version": "0.0.0",
-	"description": "AngularJS Reference Architecture",
+	"description": "<%= appdescription %>",
 	"author": {
 		"name": "Cary Landholt",
 		"email": "cary@landholt.com",

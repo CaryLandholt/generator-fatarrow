@@ -1,7 +1,7 @@
-util   = require 'util'
-path   = require 'path'
-yeoman = require 'yeoman-generator'
 chalk  = require 'chalk'
+path   = require 'path'
+util   = require 'util'
+yeoman = require 'yeoman-generator'
 
 green   = chalk.green
 magenta = chalk.magenta
@@ -9,47 +9,58 @@ white   = chalk.white
 check   = green '✓'
 
 class Generator extends yeoman.generators.Base
-	init: ->
+	init = ->
 		@pkg = require '../package.json'
 
 		@on 'end', ->
 			@installDependencies() unless @options['skip-install']
 
-	askFor: ->
+	askFor = ->
 		done = @async()
 
 		@log @yeoman
 		@log magenta 'You\'re using the fantastic fatarrow generator.'
 
 		prompts = [
-			name: 'appName'
-			message: 'What is your app\'s name?'
-			validate: (input) ->
-				!!input
+			name    : 'appname'
+			message : 'What is your app\'s name?'
+			default : path.basename process.cwd()
+		,
+			name    : 'appdescription'
+			message : 'What is your app\'s description?'
+			default : ''
 		]
 
 		@prompt prompts, ((props) ->
-			@appName = props.appName
+			@appdescription = props.appdescription
+			@appname        = props.appname
 
 			done()
 		).bind this
 
-	tree: ->
+	tree = ->
 		@log '\n', chalk.magenta 'Tree:'
 		@directory 'src', 'src', true
 
-	gulp: ->
+	gulp = ->
 		@log '\n', check, white 'gulp'
 		@copy 'config.coffee', 'config.coffee'
 		@copy 'gulpfile.js', 'gulpfile.js'
 		@copy 'gulpfile.coffee', 'gulpfile.coffee'
 
-	npm: ->
+	npm = ->
 		@log '\n', check, white 'npm'
 
 		context =
-			appname: @appName
+			appdescription : @appdescription
+			appname        : @appname
 
 		@template '_package.json', 'package.json', context
+
+	init   : init
+	askFor : askFor
+	tree   : tree
+	gulp   : gulp
+	npm    : npm
 
 module.exports = Generator
