@@ -1,5 +1,4 @@
 chalk  = require 'chalk'
-# logo   = require './logo'
 logo   = require 'fatarrow-ascii-art'
 path   = require 'path'
 util   = require 'util'

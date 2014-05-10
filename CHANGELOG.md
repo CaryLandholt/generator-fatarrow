@@ -1,3 +1,12 @@
+<a name="0.4.0"></a>
+## 0.4.0  (2014-05-09)
+
+
+#### Features
+
+* **splash:** add splash logo ([7493439f](CaryLandholt/generator-fatarrow/commit/7493439f654d8bf1cd926a12f43c8bde8491a65b))
+
+
 <a name="0.3.1"></a>
 ### 0.3.1  (2014-05-09)
 
