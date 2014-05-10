@@ -1,3 +1,12 @@
+<a name="0.5.0"></a>
+## 0.5.0  (2014-05-09)
+
+
+#### Features
+
+* **e2e:** add e2e support ([cfc8e2ba](CaryLandholt/generator-fatarrow/commit/cfc8e2ba6eda2738d169cd5be460a6d2b50efd04))
+
+
 <a name="0.4.0"></a>
 ## 0.4.0  (2014-05-09)
 
