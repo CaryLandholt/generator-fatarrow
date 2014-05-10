@@ -45,6 +45,7 @@ class Generator extends yeoman.generators.Base
 	tree = ->
 		@log '\n', chalk.magenta 'Tree:'
 		@directory 'src', 'src', true
+		@directory 'e2e', 'e2e', true
 
 	gulp = ->
 		@log '\n', check, white 'gulp'

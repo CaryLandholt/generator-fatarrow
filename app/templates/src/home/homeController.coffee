@@ -1,7 +1,4 @@
 class Home extends Controller
-	constructor: (scriptService) ->
-		scripts = scriptService.getScripts()
-		@scripts = []
-
-		angular.forEach scripts, (script) =>
-			@scripts.push script if script.indexOf('/vendor/') isnt 0
+	constructor: ($log, scriptService) ->
+		scripts  = scriptService.getScripts()
+		@scripts = (script for script in scripts when script.indexOf('/vendor/') isnt 0)
