@@ -1,4 +1,6 @@
 chalk  = require 'chalk'
+# logo   = require './logo'
+logo   = require 'fatarrow-ascii-art'
 path   = require 'path'
 util   = require 'util'
 yeoman = require 'yeoman-generator'
@@ -7,6 +9,7 @@ green   = chalk.green
 magenta = chalk.magenta
 white   = chalk.white
 check   = green '✓'
+yellow  = chalk.yellow
 
 class Generator extends yeoman.generators.Base
 	init = ->
@@ -15,19 +18,21 @@ class Generator extends yeoman.generators.Base
 		@on 'end', ->
 			@installDependencies() unless @options['skip-install']
 
+	splash = ->
+		@log logo
+		@log magenta 'Get ready to create your fatarrow app!'
+		@log ''
+
 	askFor = ->
 		done = @async()
 
-		@log @yeoman
-		@log magenta 'You\'re using the fantastic fatarrow generator.'
-
 		prompts = [
 			name    : 'appname'
-			message : 'What is your app\'s name?'
+			message : 'app name?'
 			default : path.basename process.cwd()
 		,
 			name    : 'appdescription'
-			message : 'What is your app\'s description?'
+			message : 'app description?'
 			default : ''
 		]
 
@@ -58,6 +63,7 @@ class Generator extends yeoman.generators.Base
 		@template '_package.json', 'package.json', context
 
 	init   : init
+	splash : splash
 	askFor : askFor
 	tree   : tree
 	gulp   : gulp
