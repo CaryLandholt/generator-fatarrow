@@ -1,3 +1,12 @@
+<a name="0.3.1"></a>
+### 0.3.1  (2014-05-09)
+
+
+#### Bug Fixes
+
+* **changelog:** add missing changelog ([bfd7335d](CaryLandholt/generator-fatarrow/commit/bfd7335d0d410d4732f7c6514717f6a37928d318))
+
+
 <a name="0.3.0"></a>
 ## 0.3.0  (2014-05-09)
 
