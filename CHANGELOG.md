@@ -1,3 +1,12 @@
+<a name="0.3.0"></a>
+## 0.3.0  (2014-05-09)
+
+
+#### Features
+
+* **changelog:** add changelog ([ac30e00e](CaryLandholt/generator-fatarrow/commit/ac30e00e66a99078ea5709f6341962fe99ed1822))
+
+
 <a name="0.2.1"></a>
 ### 0.2.1  (2014-05-09)
 
