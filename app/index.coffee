@@ -34,17 +34,36 @@ class Generator extends yeoman.generators.Base
 
 		prompts = [
 			name    : 'appname'
-			message : 'app name?'
+			message : 'What do you want to call your app?'
 			default : path.basename process.cwd()
 		,
 			name    : 'appdescription'
-			message : 'app description?'
+			message : 'Please provide a description for your app.'
 			default : 'a fatarrow app'
+		,
+			name    : 'features'
+			type    : 'checkbox'
+			message : 'What more would you like?'
+			choices: [
+				value   : 'includeTwitterBootstrap'
+				name    : 'Twitter Bootstrap'
+				checked : true
+			,
+				value   : 'includeExamples'
+				name    : 'Examples'
+				checked : true
+			]
 		]
 
+		hasFeature = (features, feature) ->
+			features.indexOf(feature) isnt -1
+
 		@prompt prompts, ((props) ->
-			@appdescription = props.appdescription
-			@appname        = props.appname
+			features                 = props.features
+			@appdescription          = props.appdescription
+			@appname                 = props.appname
+			@includeTwitterBootstrap = hasFeature features, 'includeTwitterBootstrap'
+			@includeExamples         = hasFeature features, 'includeExamples'
 
 			done()
 		).bind this
@@ -55,9 +74,12 @@ class Generator extends yeoman.generators.Base
 		@directory 'e2e', 'e2e', true
 		@copy '_README.md', 'README.md'
 
+	config = ->
+		@log '\n', check, white 'config'
+		@copy '_config.coffee', 'config.coffee'
+
 	gulp = ->
 		@log '\n', check, white 'gulp'
-		@copy 'config.coffee', 'config.coffee'
 		@copy 'gulpfile.js', 'gulpfile.js'
 		@copy 'gulpfile.coffee', 'gulpfile.coffee'
 
@@ -74,6 +96,7 @@ class Generator extends yeoman.generators.Base
 	splash   : splash
 	askFor   : askFor
 	scaffold : scaffold
+	config   : config
 	gulp     : gulp
 	npm      : npm
 
