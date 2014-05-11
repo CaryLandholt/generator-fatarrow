@@ -15,12 +15,19 @@ class Generator extends yeoman.generators.Base
 		@pkg = require '../package.json'
 
 		@on 'end', ->
-			@installDependencies() unless @options['skip-install']
+			cb = =>
+				@log()
+				@log logo
+				@log()
+				@log magenta "Just type 'gulp' to fire up '#{@appname}'!"
+				@log()
+
+			@installDependencies callback: cb unless @options['skip-install']
 
 	splash = ->
 		@log logo
 		@log magenta 'Get ready to create your fatarrow app!'
-		@log ''
+		@log()
 
 	askFor = ->
 		done = @async()
@@ -32,7 +39,7 @@ class Generator extends yeoman.generators.Base
 		,
 			name    : 'appdescription'
 			message : 'app description?'
-			default : ''
+			default : 'a fatarrow app'
 		]
 
 		@prompt prompts, ((props) ->
@@ -42,10 +49,11 @@ class Generator extends yeoman.generators.Base
 			done()
 		).bind this
 
-	tree = ->
+	scaffold = ->
 		@log '\n', chalk.magenta 'Tree:'
 		@directory 'src', 'src', true
 		@directory 'e2e', 'e2e', true
+		@copy '_README.md', 'README.md'
 
 	gulp = ->
 		@log '\n', check, white 'gulp'
@@ -62,11 +70,11 @@ class Generator extends yeoman.generators.Base
 
 		@template '_package.json', 'package.json', context
 
-	init   : init
-	splash : splash
-	askFor : askFor
-	tree   : tree
-	gulp   : gulp
-	npm    : npm
+	init     : init
+	splash   : splash
+	askFor   : askFor
+	scaffold : scaffold
+	gulp     : gulp
+	npm      : npm
 
 module.exports = Generator
