@@ -71,27 +71,6 @@ class ModuleGenerator extends NamedBase
 		@viewName       = path.join '/', moduleName, dasherized + '.html'
 		@viewPath       = path.join @directory, dasherized + '.html'
 
-		console.log 'VIEW NAME', @viewName
-		console.log 'VIEW PATH', @viewPath
-		console.log 'CLASS NAME', @className
-		console.log 'DASHERIZED', dasherized
-
-
-
-
-		# # @className      = _.str.classify normalized
-		# moduleName      = _.str.camelize normalized
-		# @controllerName = "#{moduleName}Controller"
-		# @serviceName    = "#{moduleName}service"
-		# directory       = "src/#{moduleName}"
-		# @routeName      = "/#{normalized }"
-		# @viewName       = "#{normalized }.html"
-		# @viewUrl        = "/#{moduleName}/#{@viewName}"
-		# @viewPath       = "#{directory}/#{@viewName}"
-		# @controllerPath = "#{directory}/#{moduleName}Controller.coffee"
-		# @servicePath    = "#{directory}/#{moduleName}Service.coffee"
-		# @routesPath     = "#{directory}/#{moduleName}Routes.coffee"
-
 	scaffold: ->
 		@log '\n', chalk.magenta 'Tree:'
 		@mkdir @directory
