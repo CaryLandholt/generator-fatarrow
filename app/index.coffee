@@ -10,7 +10,7 @@ white   = chalk.white
 check   = green '✓'
 yellow  = chalk.yellow
 
-class Generator extends yeoman.generators.Base
+class AppGenerator extends yeoman.generators.Base
 	init = ->
 		@pkg = require '../package.json'
 
@@ -100,4 +100,4 @@ class Generator extends yeoman.generators.Base
 	gulp     : gulp
 	npm      : npm
 
-module.exports = Generator
+module.exports = AppGenerator
