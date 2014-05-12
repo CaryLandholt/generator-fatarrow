@@ -1,3 +1,3 @@
 class <%= className %> extends Controller
-	constructor: ($log) ->
+	constructor: ($log<% if (includeService) { %><%= ', ' + serviceName %><% }%>) ->
 		$log.info '<%= controllerName %> instantiated.'

@@ -1,17 +1,13 @@
 chalk  = require 'chalk'
 logo   = require 'fatarrow-ascii-art'
 path   = require 'path'
-util   = require 'util'
 yeoman = require 'yeoman-generator'
 
-green   = chalk.green
-magenta = chalk.magenta
-white   = chalk.white
-check   = green '✓'
-yellow  = chalk.yellow
+Base  = yeoman.generators.Base
+check = chalk.green '✓'
 
-class AppGenerator extends yeoman.generators.Base
-	init = ->
+class AppGenerator extends Base
+	init: ->
 		@pkg = require '../package.json'
 
 		@on 'end', ->
@@ -19,17 +15,17 @@ class AppGenerator extends yeoman.generators.Base
 				@log()
 				@log logo
 				@log()
-				@log magenta "Just type 'gulp' to fire up '#{@appname}'!"
+				@log chalk.magenta "Just type 'gulp' to fire up '#{@appname}'!"
 				@log()
 
 			@installDependencies callback: cb unless @options['skip-install']
 
-	splash = ->
+	splash: ->
 		@log logo
-		@log magenta 'Get ready to create your fatarrow app!'
+		@log chalk.magenta 'Get ready to create your fatarrow app!'
 		@log()
 
-	askFor = ->
+	askFor: ->
 		done = @async()
 
 		prompts = [
@@ -68,23 +64,23 @@ class AppGenerator extends yeoman.generators.Base
 			done()
 		).bind this
 
-	scaffold = ->
+	scaffold: ->
 		@log '\n', chalk.magenta 'Tree:'
 		@directory 'src', 'src', true
 		@directory 'e2e', 'e2e', true
 		@copy '_README.md', 'README.md'
 
-	config = ->
-		@log '\n', check, white 'config'
+	config: ->
+		@log '\n', check, chalk.white 'config'
 		@copy '_config.coffee', 'config.coffee'
 
-	gulp = ->
-		@log '\n', check, white 'gulp'
+	gulp: ->
+		@log '\n', check, chalk.white 'gulp'
 		@copy 'gulpfile.js', 'gulpfile.js'
 		@copy 'gulpfile.coffee', 'gulpfile.coffee'
 
-	npm = ->
-		@log '\n', check, white 'npm'
+	npm: ->
+		@log '\n', check, chalk.white 'npm'
 
 		context =
 			appdescription : @appdescription
@@ -92,12 +88,12 @@ class AppGenerator extends yeoman.generators.Base
 
 		@template '_package.json', 'package.json', context
 
-	init     : init
-	splash   : splash
-	askFor   : askFor
-	scaffold : scaffold
-	config   : config
-	gulp     : gulp
-	npm      : npm
+	git: ->
+		@log '\n', check, chalk.white 'git'
+		@copy '.gitignore', '.gitignore'
+
+	ci: ->
+		@log '\n', check, chalk.white 'ci'
+		@copy '.travis.yml', '.travis.yml'
 
 module.exports = AppGenerator
