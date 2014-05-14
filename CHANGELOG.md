@@ -1,3 +1,20 @@
+<a name="0.6.0"></a>
+## 0.6.0  (2014-05-13)
+
+
+#### Bug Fixes
+
+* **moduleSubGenerator:** add conditional checks ([841b23e6](CaryLandholt/generator-fatarrow/commit/841b23e6d79b8df221cfa13307b6b37a4902289b))
+* **ngAnimate:** remove unused module ([67f33b9f](CaryLandholt/generator-fatarrow/commit/67f33b9f576c0b010d7a3c982c573d5b2e82e929))
+
+
+#### Features
+
+* **README:** add README ([97280019](CaryLandholt/generator-fatarrow/commit/97280019d0832be09cd90e367d6f40082f878e49))
+* **moduleSubGenerator:** add module subGenerator ([f0eb43e6](CaryLandholt/generator-fatarrow/commit/f0eb43e64aa4d9ce10c118a991df1090e7c4ed74))
+* **twitterBootstrap:** add twitterBootstrap option ([53b7bfb0](CaryLandholt/generator-fatarrow/commit/53b7bfb0b7f9d4bb07890ddb9b269c0c08542f8f))
+
+
 <a name="0.5.0"></a>
 ## 0.5.0  (2014-05-09)
 
