@@ -90,10 +90,10 @@ class AppGenerator extends Base
 
 	git: ->
 		@log '\n', check, chalk.white 'git'
-		@copy '.gitignore', '.gitignore'
+		@copy 'gitignore', '.gitignore'
 
 	ci: ->
 		@log '\n', check, chalk.white 'ci'
-		@copy '.travis.yml', '.travis.yml'
+		@copy 'travis.yml', '.travis.yml'
 
 module.exports = AppGenerator

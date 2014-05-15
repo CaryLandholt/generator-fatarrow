@@ -56,6 +56,10 @@ class ModuleGenerator extends NamedBase
 		).bind this
 
 	names: ->
+		unixifyPath = (p) ->
+			regex = /\\/g
+			p.replace regex, '/'
+
 		normalized      = _.str.underscored @name
 		dasherized      = _.str.dasherize normalized
 		@className      = _.str.classify normalized
@@ -65,10 +69,10 @@ class ModuleGenerator extends NamedBase
 		@controllerPath = path.join @directory, @controllerName + '.coffee'
 		routeName       = "#{moduleName}Routes"
 		@routePath      = path.join @directory, routeName + '.coffee'
-		@routeUrl       = path.join '/', dasherized
+		@routeUrl       = unixifyPath path.join('/', dasherized)
 		@serviceName    = "#{moduleName}Service"
 		@servicePath    = path.join @directory, @serviceName + '.coffee'
-		@viewName       = path.join '/', moduleName, dasherized + '.html'
+		@viewName       = unixifyPath path.join('/', moduleName, dasherized + '.html')
 		@viewPath       = path.join @directory, dasherized + '.html'
 
 	scaffold: ->
