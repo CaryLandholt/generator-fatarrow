@@ -1,3 +1,12 @@
+<a name="0.6.1"></a>
+### 0.6.1  (2014-05-15)
+
+
+#### Bug Fixes
+
+* **module:** include module in package.json files ([827173f9](CaryLandholt/generator-fatarrow/commit/827173f9347f62f628ed09b9693414893c927ffe))
+
+
 <a name="0.6.0"></a>
 ## 0.6.0  (2014-05-13)
 
