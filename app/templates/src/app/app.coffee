@@ -1,5 +1,9 @@
 class App extends App
 	@constructor = [
-		<% if (environment === 'dev') { %>'ngMockE2E'<% } %>
 		'ngRoute'
+		# coffeelint: disable=coffeescript_error
+		<% if (!isProd) { %>
+		'ngMockE2E'
+		<% } %>
+		# coffeelint: enable=coffeescript_error
 	]

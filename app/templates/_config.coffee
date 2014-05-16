@@ -24,7 +24,7 @@ SCRIPTS = [
 	'**/angular.min.js'
 	'**/angular-mocks.js'
 	'**/angular-route.min.js'
-	'app/app.js'
+	'**/app.js'
 	'**/*.js'
 ]
 
