@@ -1,3 +1,12 @@
+<a name="0.7.0"></a>
+## 0.7.0  (2014-05-16)
+
+
+#### Features
+
+* **optimize:** add minification ([5ce2b9d6](CaryLandholt/generator-fatarrow/commit/5ce2b9d66535ea7cf64771d54412d945e078afa9))
+
+
 <a name="0.6.1"></a>
 ### 0.6.1  (2014-05-15)
 
