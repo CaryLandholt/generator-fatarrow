@@ -1,3 +1,12 @@
+<a name="0.7.1"></a>
+### 0.7.1  (2014-05-16)
+
+
+#### Bug Fixes
+
+* **minifyHtml:** do not minify prior to templateCache ([8e4f76bb](CaryLandholt/generator-fatarrow/commit/8e4f76bbbc95972e1c953ba9f4c6574ece67f911))
+
+
 <a name="0.7.0"></a>
 ## 0.7.0  (2014-05-16)
 
