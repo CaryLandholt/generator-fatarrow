@@ -1,3 +1,12 @@
+<a name="0.8.0"></a>
+## 0.8.0  (2014-05-18)
+
+
+#### Features
+
+* **ngmin:** add ngmin ([8de84768](CaryLandholt/generator-fatarrow/commit/8de847683a4f92ed87fc0a4b4be387a87038c991))
+
+
 <a name="0.7.1"></a>
 ### 0.7.1  (2014-05-16)
 
