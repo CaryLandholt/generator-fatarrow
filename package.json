@@ -39,7 +39,7 @@
 	"peerDependencies": {
 		"coffee-script": "~1.7.1",
 		"gulp": "~3.6.2",
-		"yo": "~1.2.2"
+		"yo": "~1.1.2"
 	},
 	"scripts": {
 		"test": "mocha"
