@@ -1,3 +1,27 @@
+<a name="0.8.1"></a>
+### 0.8.1  (2014-05-20)
+
+
+#### Bug Fixes
+
+* **dependencies:** fix yo version ([1590c4cb](CaryLandholt/generator-fatarrow/commit/1590c4cba09ecc026765461dd2919484f785cf6a))
+
+
+#### Features
+
+* **README:** add README ([97280019](CaryLandholt/generator-fatarrow/commit/97280019d0832be09cd90e367d6f40082f878e49))
+* **appName:** add appName prompt ([78f19751](CaryLandholt/generator-fatarrow/commit/78f1975120fc72ec3343a06e5441fb1e2c80dcae))
+* **appdescription:** add appdescription option ([106eda4e](CaryLandholt/generator-fatarrow/commit/106eda4ec521c9e2c274be842f7675fae268ca9c))
+* **changelog:** add changelog ([ac30e00e](CaryLandholt/generator-fatarrow/commit/ac30e00e66a99078ea5709f6341962fe99ed1822))
+* **e2e:** add e2e support ([cfc8e2ba](CaryLandholt/generator-fatarrow/commit/cfc8e2ba6eda2738d169cd5be460a6d2b50efd04))
+* **keyword:** add fatarrow ([49a4addb](CaryLandholt/generator-fatarrow/commit/49a4addb631c971987cfad48d62b67934301db76))
+* **moduleSubGenerator:** add module subGenerator ([f0eb43e6](CaryLandholt/generator-fatarrow/commit/f0eb43e64aa4d9ce10c118a991df1090e7c4ed74))
+* **ngmin:** add ngmin ([8de84768](CaryLandholt/generator-fatarrow/commit/8de847683a4f92ed87fc0a4b4be387a87038c991))
+* **optimize:** add minification ([5ce2b9d6](CaryLandholt/generator-fatarrow/commit/5ce2b9d66535ea7cf64771d54412d945e078afa9))
+* **splash:** add splash logo ([7493439f](CaryLandholt/generator-fatarrow/commit/7493439f654d8bf1cd926a12f43c8bde8491a65b))
+* **twitterBootstrap:** add twitterBootstrap option ([53b7bfb0](CaryLandholt/generator-fatarrow/commit/53b7bfb0b7f9d4bb07890ddb9b269c0c08542f8f))
+
+
 <a name="0.8.0"></a>
 ## 0.8.0  (2014-05-18)
 
