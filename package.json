@@ -34,7 +34,7 @@
 		"conventional-changelog": "~0.0.9",
 		"gulp": "~3.6.2",
 		"gulp-util": "~2.2.14",
-		"mocha": "~1.18.2"
+		"mocha": "~1.19.0"
 	},
 	"peerDependencies": {
 		"coffee-script": "~1.7.1",
