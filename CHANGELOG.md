@@ -1,3 +1,17 @@
+<a name="0.9.0"></a>
+## 0.9.0  (2014-05-20)
+
+
+#### Bug Fixes
+
+* **changelog:** remove duplicate entries ([dade5fc9](CaryLandholt/generator-fatarrow/commit/dade5fc9811857a3b7f61dee7b515c3a52e81f6c))
+
+
+#### Features
+
+* **imagemin:** add image minification ([34d1cf99](CaryLandholt/generator-fatarrow/commit/34d1cf9973b21896fd1a8b12d4c972009b71da62))
+
+
 <a name="0.8.1"></a>
 ### 0.8.1  (2014-05-20)
 
