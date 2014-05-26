@@ -27,7 +27,7 @@
 		"fatarrow-ascii-art": "~0.1.1",
 		"underscore": "~1.6.0",
 		"underscore.string": "~2.3.3",
-		"yeoman-generator": "~0.16.0"
+		"yeoman-generator": "~0.17.0"
 	},
 	"devDependencies": {
 		"coffee-script": "~1.7.1",
