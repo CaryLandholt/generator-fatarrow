@@ -1,3 +1,12 @@
+<a name="0.10.0"></a>
+## 0.10.0  (2014-05-26)
+
+
+#### Features
+
+* **stats:** add plato stats ([a770b20d](CaryLandholt/generator-fatarrow/commit/a770b20df39d848543971971479c56bed408ebbb))
+
+
 <a name="0.9.0"></a>
 ## 0.9.0  (2014-05-20)
 
