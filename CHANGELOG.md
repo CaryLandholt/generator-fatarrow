@@ -1,3 +1,12 @@
+<a name="0.10.1"></a>
+### 0.10.1  (2014-05-27)
+
+
+#### Bug Fixes
+
+* **paths:** paths on Windows rendered as file paths ([69645b0c](CaryLandholt/generator-fatarrow/commit/69645b0cbcfd3a087f5ed6815a8f0d0a091bd843))
+
+
 <a name="0.10.0"></a>
 ## 0.10.0  (2014-05-26)
 
