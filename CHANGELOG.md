@@ -1,3 +1,12 @@
+<a name="0.10.2"></a>
+### 0.10.2  (2014-05-27)
+
+
+#### Bug Fixes
+
+* **logging:** fix error in onError logging in gulpfile ([fb92db28](CaryLandholt/generator-fatarrow/commit/fb92db2864b959fe4e16d7cc60a91f7c7ef62f44))
+
+
 <a name="0.10.1"></a>
 ### 0.10.1  (2014-05-27)
 
