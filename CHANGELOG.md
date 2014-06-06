@@ -1,3 +1,16 @@
+## 0.11.0 (2014-06-06)
+
+
+#### Bug Fixes
+
+* **mocha:** fix paths ([87b0118d](CaryLandholt/generator-fatarrow/commit/87b0118d9186dc0e659de5afd1ceaeaa478aae28))
+
+
+#### Features
+
+* **examples:** add YouTube ([12f57281](CaryLandholt/generator-fatarrow/commit/12f5728112d980e909c8cdad661702ffb35fa321))
+
+
 <a name="0.10.2"></a>
 ### 0.10.2  (2014-05-27)
 
