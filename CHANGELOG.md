@@ -1,3 +1,11 @@
+### 0.11.1 (2014-06-06)
+
+
+#### Bug Fixes
+
+* **package.json:** missing files: generators ([f3a76841](CaryLandholt/generator-fatarrow/commit/f3a76841dd9202f970dc940ac14f508b074d0e2d))
+
+
 ## 0.11.0 (2014-06-06)
 
 
