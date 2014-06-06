@@ -1,3 +1,11 @@
+### 0.11.3 (2014-06-06)
+
+
+#### Bug Fixes
+
+* **changelog:** add missing changelog ([62c7c750](CaryLandholt/generator-fatarrow/commit/62c7c7507b9da63151009531039805331e454023))
+
+
 ### 0.11.2 (2014-06-06)
 
 
