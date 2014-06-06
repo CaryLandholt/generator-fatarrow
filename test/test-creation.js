@@ -10,7 +10,7 @@ describe('fatarrow generator', function () {
 			}
 
 			this.app = helpers.createGenerator('fatarrow:app', [
-				'../../app'
+				'../../generators/app'
 			]);
 
 			done();
