@@ -1004,7 +1004,9 @@ gulp.task 'templateCache', ['html', 'jade', 'markdown'], ->
 gulp.task 'test', ['build'], ->
 	# launch karma in a new process to avoid blocking gulp
 	command = windowsify '.\\node_modules\\.bin\\gulp.cmd', 'gulp'
-	spawn   = childProcess.spawn command, ['karma'], {stdio: 'inherit'}
+	# spawn   = childProcess.spawn command, ['karma'], {stdio: 'inherit'}
+	exec = childProcess.exec "#{command} karma", (error, stdout, stderr) ->
+		gutil.log stdout
 
 # Compile TypeScript
 gulp.task 'typeScript', ['prepare'], ->
