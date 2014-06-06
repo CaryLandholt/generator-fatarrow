@@ -45,7 +45,6 @@
 		"test": "mocha"
 	},
 	"files": [
-		"app",
-		"module"
+		"generators"
 	]
 }
