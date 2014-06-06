@@ -1,3 +1,11 @@
+### 0.11.2 (2014-06-06)
+
+
+#### Bug Fixes
+
+* **karma:** use exec instead of spawn ([45ad5e0f](CaryLandholt/generator-fatarrow/commit/45ad5e0fcc238485e82a033ef78a0bc225fee343))
+
+
 ### 0.11.1 (2014-06-06)
 
 
