@@ -43,6 +43,34 @@ $ gulp
 ```
 
 
+## Scripting
+Your choice of scripting languages.
+
+<img src="http://drtom.ch/talks/2012/06/jazoon/images/coffeescript_logo.svg" height="100px" />
+
+<img src="http://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" height="100px" />
+
+<img src="http://www.typescriptlang.org/content/images/logo_small.png" height="100px" />
+
+
+## Styling
+Your choice of styling languages.
+
+<img src="http://www.logotypes101.com/logos/194/830812341256B99B32E1A9F242BB9F5F/css3logo.png" height="100px" />
+
+<img src="http://moduscreate.com/wp-content/uploads/2012/01/less-css-logo.png" height="100px" />
+
+
+## Templating
+Your choice of templating engines.
+
+<img src="http://www.w3.org/html/logo/downloads/HTML5_Logo_512.png" height="100px" />
+
+<img src="http://jade-lang.com/public/images/logo.png" height="100px" />
+
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Markdown-mark.svg/208px-Markdown-mark.svg.png" height="100px" />
+
+
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
