@@ -46,14 +46,13 @@ class ModuleGenerator extends NamedBase
 		hasFeature = (features, feature) ->
 			features.indexOf(feature) isnt -1
 
-		@prompt prompts, ((props) ->
+		@prompt prompts, (props) =>
 			features           = props.features
 			@includeController = hasFeature features, 'includeController'
 			@includeRoute      = hasFeature features, 'includeRoute'
 			@includeService    = hasFeature features, 'includeService'
 
 			done()
-		).bind this
 
 	names: ->
 		unixifyPath = (p) ->

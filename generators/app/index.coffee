@@ -57,7 +57,7 @@ class AppGenerator extends Base
 		hasFeature = (features, feature) ->
 			features.indexOf(feature) isnt -1
 
-		@prompt prompts, ((props) ->
+		@prompt prompts, (props) =>
 			# features                 = props.features
 			@appdescription          = props.appdescription
 			@appname                 = props.appname
@@ -67,7 +67,6 @@ class AppGenerator extends Base
 			# @includeExamples         = hasFeature features, 'includeExamples'
 
 			done()
-		).bind this
 
 	scaffold: ->
 		if @includeExamples
@@ -89,7 +88,6 @@ class AppGenerator extends Base
 		@copy 'bowerrc', '.bowerrc'
 
 	gulp: ->
-		@copy 'gulpfile.js', 'gulpfile.js'
 		@copy 'gulpfile.coffee', 'gulpfile.coffee'
 
 	npm: ->

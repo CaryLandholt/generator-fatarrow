@@ -13,6 +13,7 @@ flatten               = require 'gulp-flatten'
 fs                    = require 'fs'
 gulp                  = require 'gulp'
 gutil                 = require 'gulp-util'
+haml                  = require 'gulp-haml'
 jade                  = require 'gulp-jade'
 karma                 = require 'karma'
 imagemin              = require 'gulp-imagemin'
@@ -29,6 +30,8 @@ pkg                   = require './package.json'
 protractor            = require 'gulp-protractor'
 q                     = require 'q'
 rev                   = require 'gulp-rev'
+sass                  = require 'gulp-sass'
+sourceMaps            = require 'gulp-sourcemaps'
 template              = require 'gulp-template'
 templateCache         = require 'gulp-angular-templatecache'
 typeScript            = require 'gulp-typescript'
@@ -36,6 +39,7 @@ uglify                = require 'gulp-uglify'
 yargs                 = require 'yargs'
 
 BOWER_DIRECTORY       = 'bower_components/'
+BOWER_FILE            = 'bower.json'
 CHANGELOG_FILE        = 'CHANGELOG.md'
 COMPONENTS_DIRECTORY  = "#{BOWER_DIRECTORY}_/"
 DIST_DIRECTORY        = 'dist/'
@@ -81,12 +85,14 @@ EXTENSIONS =
 		]
 		UNCOMPILED: [
 			'.less'
+			'.scss'
 		]
 	VIEWS:
 		COMPILED: [
 			'.html'
 		]
 		UNCOMPILED: [
+			'.haml'
 			'.jade'
 			'.markdown'
 			'.md'
@@ -321,7 +327,7 @@ gulp.task 'clean', ['clean:working'], ->
 
 # Clean working directories
 gulp.task 'clean:working', ->
-	sources = [COMPONENTS_DIRECTORY, TEMP_DIRECTORY, DIST_DIRECTORY]
+	sources = [COMPONENTS_DIRECTORY, TEMP_DIRECTORY, DIST_DIRECTORY, BOWER_FILE]
 
 	gulp
 		.src sources
@@ -333,8 +339,6 @@ gulp.task 'clean:working', ->
 # Compile CoffeeScript
 gulp.task 'coffeeScript', ['prepare'], ->
 	options =
-		coffeeScript:
-			sourceMap: true
 		coffeeLint:
 			arrow_spacing:
 				level: 'error'
@@ -344,6 +348,8 @@ gulp.task 'coffeeScript', ['prepare'], ->
 				level: 'ignore'
 			no_tabs:
 				level: 'ignore'
+		sourceMaps:
+			sourceRoot: './'
 
 	sources = getScriptSources '.coffee'
 	srcs    = []
@@ -376,8 +382,14 @@ gulp.task 'coffeeScript', ['prepare'], ->
 	es
 		.merge.apply @, srcs
 		.on 'error', onError
+		
+		.pipe sourceMaps.init()
+		.on 'error', onError
 
-		.pipe coffeeScript options.coffeeScript
+		.pipe coffeeScript()
+		.on 'error', onError
+		
+		.pipe sourceMaps.write './', options.sourceMaps
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -492,6 +504,40 @@ gulp.task 'fontTypes', ['prepare'], ->
 
 	es
 		.merge.apply @, srcs
+		.on 'error', onError
+
+		.pipe gulp.dest TEMP_DIRECTORY
+		.on 'error', onError
+
+# Compile Haml
+gulp.task 'haml', ['prepare'], ->
+	sources = '**/*.haml'
+	srcs    = []
+
+	srcs.push src =
+		gulp
+			.src sources, cwd: SRC_DIRECTORY
+			.on 'error', onError
+
+			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+
+			.pipe template templateOptions
+			.on 'error', onError
+
+	srcs.push src =
+		gulp
+			.src sources, cwd: COMPONENTS_DIRECTORY
+			.on 'error', onError
+
+			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+
+	es
+		.merge.apply @, srcs
+		.on 'error', onError
+
+		.pipe haml()
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -849,6 +895,44 @@ gulp.task 'reload', ['build'], ->
 		.pipe connect.reload()
 		.on 'error', onError
 
+# Compile Sass
+gulp.task 'sass', ['prepare'], ->
+	options =
+		sass:
+			errLogToConsole: true
+
+	sources = '**/*.scss'
+	srcs    = []
+
+	srcs.push src =
+		gulp
+			.src sources, cwd: SRC_DIRECTORY
+			.on 'error', onError
+
+			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+
+			.pipe template templateOptions
+			.on 'error', onError
+
+	srcs.push src =
+		gulp
+			.src sources, cwd: COMPONENTS_DIRECTORY
+			.on 'error', onError
+
+			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+
+	es
+		.merge.apply @, srcs
+		.on 'error', onError
+
+		.pipe sass options.sass
+		.on 'error', onError
+
+		.pipe gulp.dest TEMP_DIRECTORY
+		.on 'error', onError
+
 # Process scripts
 gulp.task 'scripts', ['coffeeScript', 'javaScript', 'typeScript'].concat(if isProd then 'templateCache' else []), ->
 	sources = do (ext ='.js') ->
@@ -939,7 +1023,7 @@ gulp.task 'spa', ['scripts', 'styles'].concat(if isProd then 'templateCache' els
 gulp.task 'stats', ['plato']
 
 # Process styles
-gulp.task 'styles', ['less', 'css'], ->
+gulp.task 'styles', ['less', 'css', 'sass'], ->
 	options =
 		minifyCss:
 			keepSpecialComments: 0
@@ -979,7 +1063,7 @@ gulp.task 'styles', ['less', 'css'], ->
 		.on 'error', onError
 
 # Compile templateCache
-gulp.task 'templateCache', ['html', 'jade', 'markdown'], ->
+gulp.task 'templateCache', ['haml', 'html', 'jade', 'markdown'], ->
 	options =
 		templateCache:
 			module: APP_NAME
@@ -1004,9 +1088,7 @@ gulp.task 'templateCache', ['html', 'jade', 'markdown'], ->
 gulp.task 'test', ['build'], ->
 	# launch karma in a new process to avoid blocking gulp
 	command = windowsify '.\\node_modules\\.bin\\gulp.cmd', 'gulp'
-	# spawn   = childProcess.spawn command, ['karma'], {stdio: 'inherit'}
-	exec = childProcess.exec "#{command} karma", (error, stdout, stderr) ->
-		gutil.log stdout
+	spawn   = childProcess.spawn command, ['karma'], {stdio: 'inherit'}
 
 # Compile TypeScript
 gulp.task 'typeScript', ['prepare'], ->
@@ -1043,7 +1125,7 @@ gulp.task 'typeScript', ['prepare'], ->
 		.on 'error', onError
 
 # Process views
-gulp.task 'views', ['html', 'jade', 'markdown'], ->
+gulp.task 'views', ['haml', 'html', 'jade', 'markdown'], ->
 	sources = [
 		'**/*.html'
 		'!index.html'
