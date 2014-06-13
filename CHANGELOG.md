@@ -1,3 +1,11 @@
+## 0.12.0 (2014-06-12)
+
+
+#### Features
+
+* **sass:** add sass support ([24ba6973](CaryLandholt/generator-fatarrow/commit/24ba6973a666b3951feaed75b66ddac5368040ab))
+
+
 ### 0.11.3 (2014-06-06)
 
 
