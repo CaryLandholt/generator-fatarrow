@@ -6,9 +6,9 @@
 > <img src="http://www.jqueryscript.net/images/collective/gulp.js.png" height="100px" />
 > <img src="http://bower.io/img/bower-logo.png" height="100px" />
 > <img src="http://onesime.fr/images/yeoman.svg" height="100px" />
-> <img src="http://drtom.ch/talks/2012/06/jazoon/images/coffeescript_logo.svg" height="100px" />
 > <img src="http://jasmine.github.io/images/jasmine-horizontal.svg" height="100px" />
 > <img src="http://pascalprecht.github.io/full-spectrum-testing-slides/styles/karma-logo.svg" height="100px" />
+> <img src="http://pascalprecht.github.io/full-spectrum-testing-slides/styles/protractor-logo-large.png" height="100px" />
 
 Build large [AngularJS](http://angularjs.org/) applications with [CoffeeScript](http://coffeescript.org/) - **without the ceremony**.  By the way, you can write JavaScript too.
 
@@ -60,9 +60,13 @@ Your choice of styling languages.
 
 <img src="http://moduscreate.com/wp-content/uploads/2012/01/less-css-logo.png" height="100px" />
 
+<img src="http://sass-lang.com/assets/img/logo-235e394c.png" height="100px" />
+
 
 ## Templating
 Your choice of templating engines.
+
+<img src="http://haml.info/images/haml.png" height="100px" />
 
 <img src="http://www.w3.org/html/logo/downloads/HTML5_Logo_512.png" height="100px" />
 
