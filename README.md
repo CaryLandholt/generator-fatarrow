@@ -92,14 +92,14 @@ See [CHANGELOG.md](CHANGELOG.md)
 See [LICENSE](LICENSE)
 
 
-[build-image]:            http://img.shields.io/travis/CaryLandholt/fatarrow.svg?style=flat
-[build-url]:              http://travis-ci.org/CaryLandholt/fatarrow
+[build-image]:            http://img.shields.io/travis/CaryLandholt/generator-fatarrow.svg?style=flat
+[build-url]:              http://travis-ci.org/CaryLandholt/generator-fatarrow
 
-[dependencies-image]:     http://img.shields.io/gemnasium/CaryLandholt/fatarrow.svg?style=flat
-[dependencies-url]:       https://gemnasium.com/CaryLandholt/fatarrow
+[dependencies-image]:     http://img.shields.io/gemnasium/CaryLandholt/generator-fatarrow.svg?style=flat
+[dependencies-url]:       https://gemnasium.com/CaryLandholt/generator-fatarrow
 
 [license-image]:          http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]:            LICENSE
 
-[version-image]:          http://img.shields.io/github/tag/CaryLandholt/fatarrow.svg?style=flat
-[version-url]:            https://github.com/CaryLandholt/fatarrow/tags
+[version-image]:          http://img.shields.io/github/tag/CaryLandholt/generator-fatarrow.svg?style=flat
+[version-url]:            https://github.com/CaryLandholt/generator-fatarrow/tags
