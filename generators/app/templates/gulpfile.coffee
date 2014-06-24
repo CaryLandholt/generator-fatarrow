@@ -15,9 +15,11 @@ gulp                  = require 'gulp'
 gutil                 = require 'gulp-util'
 haml                  = require 'gulp-haml'
 jade                  = require 'gulp-jade'
+jsHint                = require 'gulp-jshint'
 karma                 = require 'karma'
 imagemin              = require 'gulp-imagemin'
 less                  = require 'gulp-less'
+liveScript            = require 'gulp-livescript'
 markdown              = require 'gulp-markdown'
 minifyCss             = require 'gulp-minify-css'
 minifyHtml            = require 'gulp-minify-html'
@@ -77,6 +79,7 @@ EXTENSIONS =
 		]
 		UNCOMPILED: [
 			'.coffee'
+			'.ls'
 			'.ts'
 		]
 	STYLES:
@@ -97,6 +100,13 @@ EXTENSIONS =
 			'.markdown'
 			'.md'
 		]
+
+PREDEFINED_GLOBALS = [
+	'angular'
+	'beforeEach'
+	'describe'
+	'it'
+]
 
 getSwitchOption = (switches) ->
 	isArray = Array.isArray switches
@@ -658,6 +668,26 @@ gulp.task 'jade', ['prepare'], ->
 
 # Compile JavaScript
 gulp.task 'javaScript', ['prepare'], ->
+	options =
+		jsHint:
+			camelcase: true
+			curly: true
+			eqeqeq: true
+			forin: true
+			freeze: true
+			immed: true
+			indent: 1
+			latedef: true
+			newcap: true
+			noarg: true
+			noempty: true
+			nonbsp: true
+			nonew: true
+			plusplus: true
+			undef: true
+			unused: true
+			predef: PREDEFINED_GLOBALS
+	
 	sources = getScriptSources '.js'
 	srcs    = []
 
@@ -667,6 +697,12 @@ gulp.task 'javaScript', ['prepare'], ->
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+			
+			.pipe jsHint options.jsHint
+			.on 'error', onError
+			
+			.pipe jsHint.reporter 'default'
 			.on 'error', onError
 
 			.pipe template templateOptions
@@ -747,6 +783,40 @@ gulp.task 'less', ['prepare'], ->
 		.on 'error', onError
 
 		.pipe less options.less
+		.on 'error', onError
+
+		.pipe gulp.dest TEMP_DIRECTORY
+		.on 'error', onError
+
+# Compile LiveScript
+gulp.task 'liveScript', ['prepare'], ->
+	sources = getScriptSources '.ls'
+	srcs    = []
+
+	srcs.push src =
+		gulp
+			.src sources, cwd: SRC_DIRECTORY
+			.on 'error', onError
+
+			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+
+			.pipe template templateOptions
+			.on 'error', onError
+
+	srcs.push src =
+		gulp
+			.src sources, cwd: COMPONENTS_DIRECTORY
+			.on 'error', onError
+
+			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+
+	es
+		.merge.apply @, srcs
+		.on 'error', onError
+
+		.pipe liveScript()
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -862,6 +932,17 @@ gulp.task 'plato', ['clean:working'], ->
 
 	srcs.push src =
 		gulp
+			.src '**/*.ls', cwd: SRC_DIRECTORY
+			.on 'error', onError
+
+			.pipe template templateOptions
+			.on 'error', onError
+
+			.pipe liveScript()
+			.on 'error', onError
+
+	srcs.push src =
+		gulp
 			.src '**/*.ts', cwd: SRC_DIRECTORY
 			.on 'error', onError
 
@@ -934,7 +1015,7 @@ gulp.task 'sass', ['prepare'], ->
 		.on 'error', onError
 
 # Process scripts
-gulp.task 'scripts', ['coffeeScript', 'javaScript', 'typeScript'].concat(if isProd then 'templateCache' else []), ->
+gulp.task 'scripts', ['coffeeScript', 'javaScript', 'liveScript', 'typeScript'].concat(if isProd then 'templateCache' else []), ->
 	sources = do (ext ='.js') ->
 		SCRIPTS
 			.concat if not useBackendless then ["!**/angular-mocks#{ext}"] else []
