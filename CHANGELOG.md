@@ -1,3 +1,11 @@
+## 0.13.0 (2014-06-23)
+
+
+#### Features
+
+* **LiveScript:** add LiveScript support ([4875f598](CaryLandholt/generator-fatarrow/commit/4875f5980d241717aa504ffa37ce261027bc4a3b))
+
+
 ## 0.12.0 (2014-06-12)
 
 
