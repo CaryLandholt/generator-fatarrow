@@ -1,3 +1,11 @@
+### 0.13.1 (2014-06-23)
+
+
+#### Bug Fixes
+
+* **README:** fix badge paths ([2e6827b0](CaryLandholt/generator-fatarrow/commit/2e6827b0d08473e6e136484a4f9c849bb7d3a010))
+
+
 ## 0.13.0 (2014-06-23)
 
 
