@@ -1,4 +1,12 @@
-### 0.13.1 (2014-06-23)
+### 0.13.1 (2014-06-24)
+
+
+#### Bug Fixes
+
+* **app:** use new ng-classify app syntax ([da909601](CaryLandholt/generator-fatarrow/commit/da9096013c200536aaeed8b9bb47939a621b17c8))
+
+
+### 0.13.2 (2014-06-23)
 
 
 #### Bug Fixes
