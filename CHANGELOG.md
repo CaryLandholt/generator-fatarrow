@@ -1,3 +1,11 @@
+### 0.14.1 (2014-07-20)
+
+
+#### Bug Fixes
+
+* **dependency:** make CoffeeScript dependency ([9ad026a8](CaryLandholt/generator-fatarrow/commit/9ad026a8f05d9c88021fe149b6fcbec5272e706c))
+
+
 ## 0.14.0 (2014-07-20)
 
 
