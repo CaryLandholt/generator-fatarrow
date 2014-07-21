@@ -34,10 +34,10 @@
 		"yeoman-generator": "0.17.1"
 	},
 	"devDependencies": {
-		"conventional-changelog": "~0.0.11",
-		"gulp": "~3.8.1",
-		"gulp-util": "~2.2.17",
-		"mocha": "~1.20.1"
+		"conventional-changelog": "0.0.11",
+		"gulp": "^3.8.6",
+		"gulp-util": "^2.2.20",
+		"mocha": "^1.20.1"
 	},
 	"peerDependencies": {
 		"gulp": "^3.8.6",
