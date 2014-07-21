@@ -1,14 +1,19 @@
 APP_NAME = 'app'
 
 BOWER_COMPONENTS =
-	'angular': '1.2.17':
+	'angular': '1.2.20':
 		scripts: 'angular.min.js'
-	'angular-mocks': '1.2.17':
+	'angular-animate': '1.2.20':
+		scripts: 'angular-animate.min.js'
+	'angular-mocks': '1.2.20':
 		scripts: 'angular-mocks.js'
-	'angular-route': '1.2.17':
+	'angular-route': '1.2.20':
 		scripts: 'angular-route.min.js'
+	'angular-loading-bar': '0.4.3':
+		scripts: 'build/loading-bar.min.js'
+		styles:  'build/loading-bar.min.css'
 	<% if (includeTwitterBootstrap) { %>
-	'bootstrap': '3.1.1':
+	'bootstrap': '3.2.0':
 		fonts:   'dist/fonts/**/*.{eot,svg,ttf,woff}'
 		styles:  'dist/css/*.min.css'
 	<% } %>
@@ -22,8 +27,10 @@ BOWER_COMPONENTS =
 
 SCRIPTS = [
 	'**/angular.min.js'
+	'**/angular-animate.min.js'
 	'**/angular-mocks.js'
 	'**/angular-route.min.js'
+	'**/loading-bar.min.js'
 	'**/app.js'
 	'**/*.js'
 ]
