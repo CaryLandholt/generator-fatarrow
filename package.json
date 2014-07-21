@@ -26,11 +26,11 @@
 		"node": ">=0.10.0"
 	},
 	"dependencies": {
-		"chalk": "~0.4.0",
-		"fatarrow-ascii-art": "~1.0.0",
-		"underscore": "~1.6.0",
-		"underscore.string": "~2.3.3",
-		"yeoman-generator": "~0.17.0"
+		"chalk": "0.5.1",
+		"fatarrow-ascii-art": "^1.0.0",
+		"underscore": "^1.6.0",
+		"underscore.string": "^2.3.3",
+		"yeoman-generator": "0.17.1"
 	},
 	"devDependencies": {
 		"coffee-script": "~1.7.1",
@@ -40,9 +40,8 @@
 		"mocha": "~1.20.1"
 	},
 	"peerDependencies": {
-		"coffee-script": ">=1.7.1",
-		"gulp": ">=3.8.1",
-		"yo": ">=1.2.0"
+		"gulp": "^3.8.6",
+		"yo": "^1.2.0"
 	},
 	"scripts": {
 		"test": "mocha"
