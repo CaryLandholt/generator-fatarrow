@@ -1,6 +1,6 @@
 {
 	"name": "generator-fatarrow",
-	"version": "0.13.2",
+	"version": "0.14.0",
 	"description": "Yeoman generator",
 	"author": {
 		"name": "Cary Landholt",

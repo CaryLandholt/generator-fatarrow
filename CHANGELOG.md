@@ -1,3 +1,11 @@
+## 0.14.0 (2014-07-20)
+
+
+#### Features
+
+* **angular-loading-bar:** add loading bar ([ede89552](CaryLandholt/generator-fatarrow/commit/ede89552425e20966226cdc279abe655cb081724))
+
+
 ### 0.13.2 (2014-06-24)
 
 
