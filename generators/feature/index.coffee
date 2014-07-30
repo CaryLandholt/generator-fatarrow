@@ -71,7 +71,7 @@ class Generator extends NamedBase
 		@routeUrl       = unixifyPath path.join('/', dasherized)
 		@serviceName    = "#{featureName}Service"
 		@servicePath    = path.join @directory, @serviceName + '.coffee'
-		@viewName       = unixifyPath path.join('/', featureName, dasherized + '.html')
+		@viewName       = unixifyPath path.join(featureName, dasherized + '.html')
 		@viewPath       = path.join @directory, dasherized + '.html'
 
 	scaffold: ->
