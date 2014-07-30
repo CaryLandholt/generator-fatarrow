@@ -1,3 +1,22 @@
+### 0.15.0 (2014-07-29)
+
+
+#### Breaking Changes
+
+* 
+Before:
+```bash
+$ yo fatarrow:module {moduleName}
+```
+
+After:
+```bash
+yo fatarrow:feature {featureName}
+```
+
+ ([df37e62a](CaryLandholt/generator-fatarrow/commit/df37e62a955ef71742d8325ad66d8d5a64ff0e50))
+
+
 ### 0.14.1 (2014-07-20)
 
 
