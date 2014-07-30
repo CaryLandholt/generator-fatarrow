@@ -8,17 +8,17 @@ yeoman = require 'yeoman-generator'
 check     = chalk.green '✓'
 NamedBase = yeoman.generators.NamedBase
 
-class ModuleGenerator extends NamedBase
+class Generator extends NamedBase
 	init: ->
 		@on 'end', ->
 			@log logo
 			@log()
-			@log chalk.magenta "Module '#{@name}' created!"
+			@log chalk.magenta "Feature '#{@name}' created!"
 			@log()
 
 	splash: ->
 		@log logo
-		@log chalk.magenta 'Get ready to create your fatarrow module!'
+		@log chalk.magenta 'Get ready to create your fatarrow feature!'
 		@log()
 
 	askFor: ->
@@ -62,16 +62,16 @@ class ModuleGenerator extends NamedBase
 		normalized      = _.str.underscored @name
 		dasherized      = _.str.dasherize normalized
 		@className      = _.str.classify normalized
-		moduleName      = _.str.camelize normalized
-		@directory      = path.join 'src', moduleName
-		@controllerName = "#{moduleName}Controller"
+		featureName     = _.str.camelize normalized
+		@directory      = path.join 'src', featureName
+		@controllerName = "#{featureName}Controller"
 		@controllerPath = path.join @directory, @controllerName + '.coffee'
-		routeName       = "#{moduleName}Routes"
+		routeName       = "#{featureName}Routes"
 		@routePath      = path.join @directory, routeName + '.coffee'
 		@routeUrl       = unixifyPath path.join('/', dasherized)
-		@serviceName    = "#{moduleName}Service"
+		@serviceName    = "#{featureName}Service"
 		@servicePath    = path.join @directory, @serviceName + '.coffee'
-		@viewName       = unixifyPath path.join('/', moduleName, dasherized + '.html')
+		@viewName       = unixifyPath path.join('/', featureName, dasherized + '.html')
 		@viewPath       = path.join @directory, dasherized + '.html'
 
 	scaffold: ->
@@ -79,13 +79,13 @@ class ModuleGenerator extends NamedBase
 		@mkdir @directory
 
 		if @includeController
-			@copy 'src/module/moduleController.coffee', @controllerPath
+			@copy 'src/feature/featureController.coffee', @controllerPath
 
 		if @includeRoute
-			@copy 'src/module/moduleRoutes.coffee', @routePath
-			@copy 'src/module/module.html', @viewPath
+			@copy 'src/feature/featureRoutes.coffee', @routePath
+			@copy 'src/feature/feature.html', @viewPath
 
 		if @includeService
-			@copy 'src/module/moduleService.coffee', @servicePath
+			@copy 'src/feature/featureService.coffee', @servicePath
 
-module.exports = ModuleGenerator
+module.exports = Generator

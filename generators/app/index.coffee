@@ -6,7 +6,7 @@ yeoman = require 'yeoman-generator'
 Base  = yeoman.generators.Base
 check = chalk.green '✓'
 
-class AppGenerator extends Base
+class Generator extends Base
 	init: ->
 		@pkg = require '../../package.json'
 
@@ -103,4 +103,4 @@ class AppGenerator extends Base
 	ci: ->
 		@copy 'travis.yml', '.travis.yml'
 
-module.exports = AppGenerator
+module.exports = Generator

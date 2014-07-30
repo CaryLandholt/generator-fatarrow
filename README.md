@@ -20,6 +20,8 @@ Build large [AngularJS](http://angularjs.org/) applications with [CoffeeScript](
 ## Table of Contents
 * [Installing](#installing)
 * [Running](#running)
+* [Generators](#generators)
+* [Supported Technologies](#supported-technologies)
 * [Contributing](#contributing)
 * [Changelog](#changelog)
 * [License](#license)
@@ -30,16 +32,20 @@ Before running, you must install and configure the following one-time dependenci
 
 * [Git](http://git-scm.com/)
 * [Node.js](http://nodejs.org/)
-* [gulp.js](http://gulpjs.com/) - use the terminal command below
-```bash
-$ npm install -g gulp
-```
 
 Once the dependencies have been installed, enter the following in the terminal:
 ```bash
-$ git clone git@github.com:CaryLandholt/fatarrow.git
-$ cd fatarrow
-$ npm install
+$ npm install -g generator-fatarrow
+```
+
+Make a new directory, and `cd` into it:
+```bash
+$ mkdir my-project && cd $_
+```
+
+Run `yo fatarrow`:
+```bash
+$ yo fatarrow
 ```
 
 
@@ -50,7 +56,20 @@ $ gulp
 ```
 
 
-## Scripting
+## Generators
+
+
+### feature
+```bash
+$ yo fatarrow:feature {featureName}
+```
+
+
+## Supported Technologies
+Use your choice of scripting, styling, and templating technologies.
+
+
+### Scripting
 Your choice of scripting languages.
 
 * <img src="http://drtom.ch/talks/2012/06/jazoon/images/coffeescript_logo.svg" height="100px" />
@@ -62,7 +81,7 @@ Your choice of scripting languages.
 * <img src="http://www.typescriptlang.org/content/images/logo_small.png" height="100px" />
 
 
-## Styling
+### Styling
 Your choice of styling languages.
 
 * <img src="http://www.logotypes101.com/logos/194/830812341256B99B32E1A9F242BB9F5F/css3logo.png" height="100px" />
@@ -72,7 +91,7 @@ Your choice of styling languages.
 * <img src="http://sass-lang.com/assets/img/logos/logo-235e394c.png" height="100px" />
 
 
-## Templating
+### Templating
 Your choice of templating engines.
 
 * <img src="http://haml.info/images/haml.png" height="100px" />
