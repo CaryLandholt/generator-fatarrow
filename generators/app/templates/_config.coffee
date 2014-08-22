@@ -1,13 +1,13 @@
 APP_NAME = 'app'
 
 BOWER_COMPONENTS =
-	'angular': '1.2.21':
+	'angular': '1.2.22':
 		scripts: 'angular.min.js'
-	'angular-animate': '1.2.21':
+	'angular-animate': '1.2.22':
 		scripts: 'angular-animate.min.js'
-	'angular-mocks': '1.2.21':
+	'angular-mocks': '1.2.22':
 		scripts: 'angular-mocks.js'
-	'angular-route': '1.2.21':
+	'angular-route': '1.2.22':
 		scripts: 'angular-route.min.js'
 	'angular-loading-bar': '0.5.0':
 		scripts: 'build/loading-bar.min.js'
@@ -18,7 +18,7 @@ BOWER_COMPONENTS =
 		styles:  'dist/css/*.min.css'
 	<% } %>
 	<% if (includeExamples) { %>
-	'google-code-prettify': '1.0.2':
+	'google-code-prettify': '1.0.3':
 		scripts: 'src/prettify.js'
 		styles:  'src/prettify.css'
 	'showdown': '0.3.1':
