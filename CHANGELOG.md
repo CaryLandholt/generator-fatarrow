@@ -1,3 +1,11 @@
+### 0.15.1 (2014-08-21)
+
+
+#### Bug Fixes
+
+* **featureName:** extract path from featureName ([268b95bb](CaryLandholt/generator-fatarrow/commit/268b95bb052de4675d3d84891bdee056c095c02c), closes [#5](CaryLandholt/generator-fatarrow/issues/5))
+
+
 ### 0.15.0 (2014-07-29)
 
 
