@@ -18,7 +18,7 @@ class Generator extends NamedBase
 
 	splash: ->
 		@log logo
-		@log chalk.magenta 'Get ready to create your fatarrow feature!'
+		@log chalk.magenta "Get ready to create your '#{@name}' fatarrow feature!"
 		@log()
 
 	askFor: ->
@@ -59,20 +59,22 @@ class Generator extends NamedBase
 			regex = /\\/g
 			p.replace regex, '/'
 
-		normalized      = _.str.underscored @name
-		dasherized      = _.str.dasherize normalized
-		@className      = _.str.classify normalized
-		featureName     = _.str.camelize normalized
-		@directory      = path.join 'src', featureName
-		@controllerName = "#{featureName}Controller"
-		@controllerPath = path.join @directory, @controllerName + '.coffee'
-		routeName       = "#{featureName}Routes"
-		@routePath      = path.join @directory, routeName + '.coffee'
-		@routeUrl       = unixifyPath path.join('/', dasherized)
-		@serviceName    = "#{featureName}Service"
-		@servicePath    = path.join @directory, @serviceName + '.coffee'
-		@viewName       = unixifyPath path.join(featureName, dasherized + '.html')
-		@viewPath       = path.join @directory, dasherized + '.html'
+		normalized               = _.str.underscored @name
+		featureDirectory         = _.str.camelize normalized
+		featureDirectorySegments = featureDirectory.split '/'
+		featureName              = featureDirectorySegments[featureDirectorySegments.length - 1]
+		dasherized               = _.str.dasherize featureName
+		@className               = _.str.classify featureName
+		@directory               = path.join 'src', featureDirectory
+		@controllerName          = "#{featureName}Controller"
+		@controllerPath          = path.join @directory, @controllerName + '.coffee'
+		routeName                = "#{featureName}Routes"
+		@routePath               = path.join @directory, routeName + '.coffee'
+		@routeUrl                = unixifyPath path.join('/', featureDirectory)
+		@serviceName             = "#{featureName}Service"
+		@servicePath             = path.join @directory, @serviceName + '.coffee'
+		@viewName                = unixifyPath path.join(featureDirectory, dasherized + '.html')
+		@viewPath                = path.join @directory, dasherized + '.html'
 
 	scaffold: ->
 		@log '\n', chalk.magenta 'Tree:'
