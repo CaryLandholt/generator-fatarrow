@@ -124,5 +124,5 @@ See [LICENSE](LICENSE)
 [license-image]:          http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]:            LICENSE
 
-[version-image]:          http://img.shields.io/github/tag/CaryLandholt/generator-fatarrow.svg?style=flat
-[version-url]:            https://github.com/CaryLandholt/generator-fatarrow/tags
+[version-image]:          http://img.shields.io/npm/v/generator-fatarrow.svg?style=flat
+[version-url]:            https://npmjs.org/package/generator-fatarrow
