@@ -50,7 +50,7 @@ $ gulp
 * [Usage](#usage)
 * [Generators](#generators)
 	- [fatarrow](#fatarrow)
-	- [fatarrow:feature](#fatarrow-feature)
+	- [fatarrow:feature](#fatarrowfeature)
 * [Configuration](#configuration)
 	- [Add Bower Component](#add-bower-component)
 * [Supported Technologies](#supported-technologies)
@@ -95,14 +95,14 @@ You need three pieces of information for each Bower component to include in your
 2. The version of the component (e.g. *1.4.0*)
 3. The files within the component to include in your app (e.g. *restangular.min.js*)
 
-The following will include the *restangular* component, version *1.4.0*, and place the `dist/restangular.min.js` file in the `vendor/scripts` directory.  By default, all Bower components will be placed in the `vendor` directory.
+The following will include the **restangular** component, version **1.4.0**, and place the `dist/restangular.min.js` file in the `vendor/scripts` directory.  By default, all Bower components will be placed in the `vendor` directory.
 ```coffee
 BOWER_COMPONENTS =
 	'restangular': '1.4.0':
 		scripts: 'dist/restangular.min.js'
 ```
 
-If load order is important, include a reference to the file in the **SCRIPTS** config.
+If load order is important, include a reference to the file in the **SCRIPTS** section.
 
 The following will ensure **restangular** is loaded prior to `app.js`.
 ```coffee
