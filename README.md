@@ -14,54 +14,108 @@
 > <img src="http://pascalprecht.github.io/full-spectrum-testing-slides/styles/karma-logo.svg" height="100px" />
 > <img src="http://pascalprecht.github.io/full-spectrum-testing-slides/styles/protractor-logo-large.png" height="100px" />
 
-Build large [AngularJS](http://angularjs.org/) applications with [CoffeeScript](http://coffeescript.org/) - **without the ceremony**.  By the way, you can write JavaScript too.
+Build large [AngularJS](http://angularjs.org/) applications with [CoffeeScript](http://coffeescript.org/) - **without the ceremony** or write plain old JavaScript.
+
+
+## Install
+Install with [npm](https://npmjs.org/package/generator-fatarrow)
+
+```bash
+$ npm install -g generator-fatarrow
+```
+
+
+## Usage
+Make a new directory, and `cd` into it:
+
+```bash
+$ mkdir my-project && cd $_
+```
+
+Create your app:
+
+```bash
+$ yo fatarrow
+```
+
+Run your app:
+
+```bash
+$ gulp
+```
 
 
 ## Table of Contents
-* [Installing](#installing)
-* [Running](#running)
+* [Install](#install)
+* [Usage](#usage)
 * [Generators](#generators)
+	- [fatarrow](#fatarrow)
+	- [fatarrow:feature](#fatarrow-feature)
+* [Configuration](#configuration)
+	- [Add Bower Component](#add-bower-component)
 * [Supported Technologies](#supported-technologies)
 * [Contributing](#contributing)
 * [Changelog](#changelog)
 * [License](#license)
 
 
-## Installing
-Before running, you must install and configure the following one-time dependencies:
+## Generators
 
-* [Git](http://git-scm.com/)
-* [Node.js](http://nodejs.org/)
 
-Once the dependencies have been installed, enter the following in the terminal:
-```bash
-$ npm install -g generator-fatarrow
-```
+### fatarrow
+Scaffold your app
 
-Make a new directory, and `cd` into it:
-```bash
-$ mkdir my-project && cd $_
-```
-
-Run `yo fatarrow`:
 ```bash
 $ yo fatarrow
 ```
 
 
-## Running
-Enter the following in the terminal:
+### fatarrow:feature
+Create a new feature
+
 ```bash
-$ gulp
+$ yo fatarrow:feature {featureName}
+```
+
+The following will create a feature named **login** within the **user** directory.
+
+```bash
+$ yo fatarrow:feature user/login
 ```
 
 
-## Generators
+## Configuration
+fatarrow is configured via a single file - `config.coffee`
 
 
-### feature
-```bash
-$ yo fatarrow:feature {featureName}
+### Add Bower Component
+You need three pieces of information for each Bower component to include in your app.
+
+1. The Bower component name (e.g. *restangular*)
+2. The version of the component (e.g. *1.4.0*)
+3. The files within the component to include in your app (e.g. *restangular.min.js*)
+
+The following will include the *restangular* component, version *1.4.0*, and place the `dist/restangular.min.js` file in the `vendor/scripts` directory.  By default, all Bower components will be placed in the `vendor` directory.
+```coffee
+BOWER_COMPONENTS =
+	'restangular': '1.4.0':
+		scripts: 'dist/restangular.min.js'
+```
+
+If load order is important, include a reference to the file in the **SCRIPTS** config.
+
+The following will ensure **restangular** is loaded prior to `app.js`.
+```coffee
+SCRIPTS =
+	'**/angular.min.js'
+	'**/restangular.min.js'
+	'**/app.js'
+	'**/*.js'
+```
+
+For AngularJS components, include a reference to the module within your application.  For example:
+```coffee
+angular.module('app', ['restangular']);
 ```
 
 
