@@ -1,44 +1,28 @@
-{APP_NAME, BOWER_COMPONENTS, SCRIPTS, STYLES} = require './config.coffee'
+{APP_NAME, BOWER_COMPONENTS, LANGUAGES, PROXY_CONFIG, SCRIPTS, STYLES} = require './config.coffee'
 
 bower                 = require 'bower'
+browserSync           = require 'browser-sync'
 childProcess          = require 'child_process'
-coffeeScript          = require 'gulp-coffee'
-coffeeLint            = require 'gulp-coffeelint'
-concat                = require 'gulp-concat'
-connect               = require 'gulp-connect'
 conventionalChangelog = require 'conventional-changelog'
 es                    = require 'event-stream'
-flatten               = require 'gulp-flatten'
 fs                    = require 'fs'
 gulp                  = require 'gulp'
-gutil                 = require 'gulp-util'
-haml                  = require 'gulp-haml'
-jade                  = require 'gulp-jade'
-jsHint                = require 'gulp-jshint'
 karma                 = require 'karma'
-imagemin              = require 'gulp-imagemin'
-less                  = require 'gulp-less'
-liveScript            = require 'gulp-livescript'
-markdown              = require 'gulp-markdown'
-minifyCss             = require 'gulp-minify-css'
-minifyHtml            = require 'gulp-minify-html'
-plato                 = require 'gulp-plato'
-ngAnnotate            = require 'gulp-ng-annotate'
-ngClassify            = require 'gulp-ng-classify'
-open                  = require 'gulp-open'
 path                  = require 'path'
 pkg                   = require './package.json'
-protractor            = require 'gulp-protractor'
+proxy                 = require 'proxy-middleware'
 q                     = require 'q'
-rev                   = require 'gulp-rev'
-rimraf                = require 'gulp-rimraf'
-sass                  = require 'gulp-sass'
-sourceMaps            = require 'gulp-sourcemaps'
-template              = require 'gulp-template'
-templateCache         = require 'gulp-angular-templatecache'
-typeScript            = require 'gulp-typescript'
-uglify                = require 'gulp-uglify'
+url                   = require 'url'
 yargs                 = require 'yargs'
+
+plugins = require('gulp-load-plugins')
+	rename:
+		'gulp-minify-css'              : 'minifycss'
+		'gulp-gulp-minify-html'        : 'minifyhtml'
+		'gulp-ng-annotate'             : 'ngannotate'
+		'gulp-ng-classify'             : 'ngclassify'
+		'gulp-angular-templatecache'   : 'templatecache'
+		'gulp-if'                      : 'gulpif'
 
 BOWER_DIRECTORY       = 'bower_components/'
 BOWER_FILE            = 'bower.json'
@@ -79,6 +63,7 @@ EXTENSIONS =
 		]
 		UNCOMPILED: [
 			'.coffee'
+			'.es6'
 			'.ls'
 			'.ts'
 		]
@@ -136,9 +121,19 @@ yargs.options 'backend',
 	description : 'Use your own backend.  No backendless.'
 	type        : 'boolean'
 
+yargs.options 'bower',
+	default     : true
+	description : 'Force retrieve of Bower components'
+	type        : 'boolean'
+
 yargs.options 'help',
 	default     : false
 	description : 'Show help'
+	type        : 'boolean'
+
+yargs.options 'injectcss',
+	default     : false
+	description : 'Injects CSS without reloading'
 	type        : 'boolean'
 
 yargs.options 'prod',
@@ -161,11 +156,25 @@ yargs.options 'stats',
 	description : 'Run statistics'
 	type        : 'boolean'
 
-appUrl         = "http://localhost:#{PORT}"
-env            = gutil.env
+yargs.options 'open',
+	default     : true
+	description : 'Open app from browser-sync'
+	type        : 'boolean'
+
+yargs.options 'citest',
+	default     : false
+	description : 'Run tests and report exit codes'
+	type        : 'boolean'
+
+citest         = getSwitchOption 'citest'
+env            = plugins.util.env
+firstRun       = true
+getBower       = getSwitchOption 'bower'
+injectCss	   = getSwitchOption 'injectcss'
 isProd         = getSwitchOption 'prod'
 isWindows      = /^win/.test(process.platform)
 manifest       = {}
+open           = getSwitchOption 'open'
 runStats       = !isProd and getSwitchOption 'stats'
 useBackendless = not (isProd or getSwitchOption 'backend')
 runServer      = getSwitchOption 'serve'
@@ -174,14 +183,18 @@ runWatch       = !isProd and runServer
 showHelp       = getSwitchOption 'help'
 
 return if showHelp
-	# console.log task for task, options of gulp.tasks
 	console.log '\n' + yargs.help()
 
-templateOptions =
+ngClassifyOptions =
 	appName: APP_NAME
-	useBackendless: useBackendless
+
+templateOptions = {
+	appName: APP_NAME
+	isProd
+	useBackendless
 	scripts: []
 	styles: []
+}
 
 getScriptSources = (ext) ->
 	["**/*#{ext}"]
@@ -194,8 +207,8 @@ onError = (e) ->
 	errors   = if isArray then err else [err]
 	messages = (error for error in errors)
 
-	gutil.log gutil.colors.red message for message in messages
-	@emit 'end'
+	plugins.util.log plugins.util.colors.red message for message in messages
+	@emit 'end' unless isProd
 
 onRev = (file) ->
 	from           = path.relative file.revOrigBase, file.revOrigPath
@@ -224,25 +237,18 @@ onStyle = (file) ->
 
 	file
 
-openApp = ->
-	sources = 'index.html'
-
-	options =
-		open:
-			url: appUrl
-
-	gulp
-		.src sources, cwd: DIST_DIRECTORY
-		.on 'error', onError
-
-		.pipe open '', options.open
-		.on 'error', onError
-
 startServer = ->
-	connect.server
-		livereload: !isProd
+	return if browserSync.active
+
+	browserSync
+		middleware: PROXY_CONFIG.map (config) ->
+			options = url.parse config.url
+			options.route = config.route
+			proxy options
+		open: open
 		port: PORT
-		root: DIST_DIRECTORY
+		server: DIST_DIRECTORY
+	, -> firstRun = false
 
 unixifyPath = (p) ->
 	p.replace /\\/g, '/'
@@ -250,17 +256,73 @@ unixifyPath = (p) ->
 windowsify = (windowsCommand, nonWindowsCommand) ->
 	if isWindows then windowsCommand else nonWindowsCommand
 
+gulp.task 'babel', ['prepare'], ->
+	sources = getScriptSources '.es6'
+	srcs    = []
+	options =
+		sourceMaps:
+			sourceRoot: './'
+
+
+	srcs.push src =
+		gulp
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
+			.on 'error', onError
+
+			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+
+			.pipe plugins.sourcemaps.init()
+			.on 'error', onError
+
+			.pipe plugins.babel()
+			.on 'error', onError
+
+			.pipe plugins.sourcemaps.write './', options.sourceMaps
+			.on 'error', onError
+
+			.pipe gulp.dest TEMP_DIRECTORY
+			.on 'error', onError
+
 # Get components via Bower
 gulp.task 'bower', ['clean:working'], ->
+	unless firstRun
+		deferred = q.defer()
+		deferred.resolve()
+		return deferred
+
 	options =
 		directory: BOWER_DIRECTORY
 
+	bowerOptions =
+		forceLatest: true
+
 	components = []
 
-	components.push "#{component}##{version}" for version, files of value for component, value of BOWER_COMPONENTS
+	urlExpression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
+	urlRegEx = new RegExp urlExpression
+
+	for component, value of BOWER_COMPONENTS
+		for version, files of value
+			hasVersion = !!version
+
+			if !hasVersion
+				components.push component
+				continue
+
+			isUrl = version.match urlRegEx
+
+			if isUrl
+				components.push version
+				continue
+
+			components.push "#{component}##{version}"
 
 	bower
-		.commands.install components, {}, options
+		.commands.install components, bowerOptions, options
 		.on 'error', onError
 
 # build the app
@@ -286,7 +348,7 @@ gulp.task 'build', ['spa', 'fonts', 'images'], ->
 	if not isProd
 		srcs.push src =
 			gulp
-				.src getSources(), cwd: TEMP_DIRECTORY
+				.src getSources(), {cwd: TEMP_DIRECTORY, nodir: true}
 				.on 'error', onError
 
 	extensions = extensions
@@ -298,12 +360,12 @@ gulp.task 'build', ['spa', 'fonts', 'images'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	es
@@ -319,7 +381,7 @@ gulp.task 'changelog', ['normalizeComponents', 'stats'], ->
 		repository: pkg.repository.url
 		version: pkg.version
 		file: CHANGELOG_FILE
-		log: gutil.log
+		log: plugins.util.log
 
 	conventionalChangelog options, (err, log) ->
 		fs.writeFile CHANGELOG_FILE, log
@@ -332,18 +394,18 @@ gulp.task 'clean', ['clean:working'], ->
 		.src sources, {read: false}
 		.on 'error', onError
 
-		.pipe rimraf()
+		.pipe plugins.rimraf()
 		.on 'error', onError
 
 # Clean working directories
 gulp.task 'clean:working', ->
-	sources = [COMPONENTS_DIRECTORY, TEMP_DIRECTORY, DIST_DIRECTORY, BOWER_FILE]
+	sources = [].concat(if injectCss then [] else [DIST_DIRECTORY]).concat(if firstRun then [TEMP_DIRECTORY] else []).concat(if getBower and firstRun then [COMPONENTS_DIRECTORY, BOWER_FILE] else [])
 
 	gulp
 		.src sources, {read: false}
 		.on 'error', onError
 
-		.pipe rimraf()
+		.pipe plugins.rimraf()
 		.on 'error', onError
 
 # Compile CoffeeScript
@@ -366,24 +428,21 @@ gulp.task 'coffeeScript', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe gulp.dest TEMP_DIRECTORY
+			.pipe plugins.coffeelint options.coffeeLint
 			.on 'error', onError
 
-			.pipe coffeeLint options.coffeeLint
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
-			.pipe template templateOptions
-			.on 'error', onError
-
-			.pipe ngClassify()
+			.pipe plugins.ngclassify ngClassifyOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
@@ -392,14 +451,20 @@ gulp.task 'coffeeScript', ['prepare'], ->
 	es
 		.merge.apply @, srcs
 		.on 'error', onError
-		
-		.pipe sourceMaps.init()
+
+		.pipe plugins.newer TEMP_DIRECTORY
 		.on 'error', onError
 
-		.pipe coffeeScript()
+		.pipe gulp.dest TEMP_DIRECTORY
 		.on 'error', onError
-		
-		.pipe sourceMaps.write './', options.sourceMaps
+
+		.pipe plugins.sourcemaps.init()
+		.on 'error', onError
+
+		.pipe plugins.coffee()
+		.on 'error', onError
+
+		.pipe plugins.sourcemaps.write './', options.sourceMaps
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -412,18 +477,21 @@ gulp.task 'css', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	es
@@ -434,47 +502,34 @@ gulp.task 'css', ['prepare'], ->
 		.on 'error', onError
 
 # Default build
-gulp.task 'default', [].concat(if runServer then ['open'] else ['build']).concat(if runWatch then ['watch'] else []).concat(if runSpecs then ['test'] else [])
+gulp.task 'default', [].concat(if runServer then ['server'] else ['build']).concat(if runWatch then ['watch'] else []).concat(if runSpecs then ['test'] else [])
 
 # Execute E2E tests
-gulp.task 'e2e', ->
-	e2eConfigFile       = path.join './', TEMP_DIRECTORY, 'e2e-config.coffee'
-	phantomjsBinaryPath = windowsify './node_modules/.bin/phantomjs.cmd', './node_modules/phantomjs/bin/phantomjs'
+gulp.task 'e2e', ['server'], ->
+	e2eConfigFile       = './protractor.config.coffee'
 	sources             = '**/*.spec.{coffee,js}'
-
-	# create temporary e2e-config file to avoid an additional config file
-	# currently gulp-protractor requires one the existence of an e2e-config file
-	do (e2eConfigFile) ->
-		doesExist = fs.existsSync TEMP_DIRECTORY
-
-		if !doesExist
-			throw new Error 'The app must be currently running (gulp).'
-
-		contents = 'exports.config = {}'
-
-		fs.writeFileSync e2eConfigFile, contents
 
 	options =
 		protractor:
 			configFile: e2eConfigFile
-			args: [
-				'--baseUrl', appUrl
-				'--browser', 'phantomjs'
-				'--capabilities.phantomjs.binary.path', phantomjsBinaryPath
-			]
 
-	gulp
+	str = gulp
 		.src sources, {cwd: E2E_DIRECTORY, read: false}
 		.on 'error', onError
 
-		.pipe protractor.protractor options.protractor
-		.on 'error', onError
+		.pipe plugins.protractor.protractor options.protractor
 
-# Start E2E driver
-gulp.task 'e2e-driver', protractor.webdriver_standalone
+	if citest
+		str.on 'error', ->
+			process.exit 1
+		str.on 'end', ->
+	else
+		str.on 'error', onError
+
+	str
 
 # Update E2E driver
-gulp.task 'e2e-driver-update', protractor.webdriver_update
+gulp.task 'e2e-driver-update', plugins.protractor.webdriver_update
 
 # Process fonts
 gulp.task 'fonts', ['fontTypes'], ->
@@ -482,12 +537,12 @@ gulp.task 'fonts', ['fontTypes'], ->
 
 	src =
 		gulp
-			.src sources, cwd: TEMP_DIRECTORY
+			.src sources, {cwd: TEMP_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	return if isProd
 		src
-			.pipe flatten()
+			.pipe plugins.flatten()
 			.on 'error', onError
 
 			.pipe gulp.dest path.join DIST_DIRECTORY, FONTS_DIRECTORY
@@ -504,12 +559,12 @@ gulp.task 'fontTypes', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	es
@@ -526,18 +581,21 @@ gulp.task 'haml', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
@@ -547,7 +605,7 @@ gulp.task 'haml', ['prepare'], ->
 		.merge.apply @, srcs
 		.on 'error', onError
 
-		.pipe haml()
+		.pipe plugins.haml()
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -564,22 +622,22 @@ gulp.task 'html', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe gulp.dest TEMP_DIRECTORY
-			.on 'error', onError
-
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	es
 		.merge.apply @, srcs
+		.on 'error', onError
+
+		.pipe plugins.newer TEMP_DIRECTORY
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -591,12 +649,12 @@ gulp.task 'images', ['imageTypes'], ->
 
 	src =
 		gulp
-			.src sources, cwd: TEMP_DIRECTORY
+			.src sources, {cwd: TEMP_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	return if isProd
 		src
-			.pipe imagemin()
+			.pipe plugins.imagemin()
 			.on 'error', onError
 
 			.pipe gulp.dest DIST_DIRECTORY
@@ -613,12 +671,12 @@ gulp.task 'imageTypes', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	es
@@ -639,28 +697,28 @@ gulp.task 'jade', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
-			.on 'error', onError
-
-			.pipe gulp.dest TEMP_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	es
 		.merge.apply @, srcs
 		.on 'error', onError
 
-		.pipe jade options.jade
+		.pipe plugins.jade options.jade
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -687,34 +745,34 @@ gulp.task 'javaScript', ['prepare'], ->
 			undef: true
 			unused: true
 			predef: PREDEFINED_GLOBALS
-	
+
 	sources = getScriptSources '.js'
 	srcs    = []
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe gulp.dest TEMP_DIRECTORY
-			.on 'error', onError
-			
-			.pipe jsHint options.jsHint
-			.on 'error', onError
-			
-			.pipe jsHint.reporter 'default'
+			.pipe plugins.jshint options.jsHint
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.jshint.reporter 'default'
+			.on 'error', onError
+
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	es
 		.merge.apply @, srcs
+		.on 'error', onError
+
+		.pipe plugins.newer TEMP_DIRECTORY
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -722,6 +780,8 @@ gulp.task 'javaScript', ['prepare'], ->
 
 # Execute karma unit tests
 gulp.task 'karma', ->
+	sources = [].concat SCRIPTS, '**/*.html'
+
 	options =
 		autoWatch: false
 		background: true
@@ -731,12 +791,16 @@ gulp.task 'karma', ->
 		]
 		colors: true
 		exclude: ["#{STATS_DIST_DIRECTORY}**"]
-		files: SCRIPTS
+		files: sources
 		frameworks: [
 			'jasmine'
 		]
 		keepalive: false
 		logLevel: 'WARN'
+		ngHtml2JsPreprocessor:
+			stripPrefix: 'dist/'
+		preprocessors:
+			'**/*.html': 'ng-html2js'
 		reporters: [
 			'spec'
 		]
@@ -753,6 +817,9 @@ gulp.task 'karma', ->
 gulp.task 'less', ['prepare'], ->
 	options =
 		less:
+			paths: [
+				path.resolve SRC_DIRECTORY
+			]
 			sourceMap: true
 			sourceMapBasepath: path.resolve TEMP_DIRECTORY
 
@@ -761,18 +828,24 @@ gulp.task 'less', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
@@ -782,7 +855,7 @@ gulp.task 'less', ['prepare'], ->
 		.merge.apply @, srcs
 		.on 'error', onError
 
-		.pipe less options.less
+		.pipe plugins.less options.less
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -795,18 +868,15 @@ gulp.task 'liveScript', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe gulp.dest TEMP_DIRECTORY
-			.on 'error', onError
-
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
@@ -816,7 +886,13 @@ gulp.task 'liveScript', ['prepare'], ->
 		.merge.apply @, srcs
 		.on 'error', onError
 
-		.pipe liveScript()
+		.pipe plugins.newer TEMP_DIRECTORY
+		.on 'error', onError
+
+		.pipe gulp.dest TEMP_DIRECTORY
+		.on 'error', onError
+
+		.pipe plugins.livescript()
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -829,28 +905,28 @@ gulp.task 'markdown', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
-			.on 'error', onError
-
-			.pipe gulp.dest TEMP_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	es
 		.merge.apply @, srcs
 		.on 'error', onError
 
-		.pipe markdown()
+		.pipe plugins.markdown()
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
@@ -861,6 +937,12 @@ gulp.task 'md', ['markdown']
 
 # Normalize Bower components
 gulp.task 'normalizeComponents', ['bower'], ->
+	unless firstRun
+		deferred = q.defer()
+		deferred.resolve()
+		return deferred
+
+
 	bowerComponents = do ->
 		bowerJson =
 			_comment: 'THIS FILE IS AUTOMATICALLY GENERATED.  DO NOT EDIT.'
@@ -888,17 +970,13 @@ gulp.task 'normalizeComponents', ['bower'], ->
 
 	srcs = for componentType, sources of bowerComponents
 		gulp
-			.src sources, cwd: BOWER_DIRECTORY
+			.src sources, {cwd: BOWER_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 			.pipe gulp.dest path.join COMPONENTS_DIRECTORY, VENDOR_DIRECTORY, componentType
 			.on 'error', onError
 
 	es.merge.apply @, srcs
-
-# Open the app in the default browser
-gulp.task 'open', ['server'], ->
-	openApp()
 
 # Execute Plato complexity analysis
 gulp.task 'plato', ['clean:working'], ->
@@ -910,46 +988,46 @@ gulp.task 'plato', ['clean:working'], ->
 
 	srcs.push src =
 		gulp
-			.src '**/*.coffee', cwd: SRC_DIRECTORY
+			.src '**/*.coffee', {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
-			.pipe ngClassify()
+			.pipe plugins.ngclassify ngClassifyOptions
 			.on 'error', onError
 
-			.pipe coffeeScript()
-			.on 'error', onError
-
-	srcs.push src =
-		gulp
-			.src '**/*.js', cwd: SRC_DIRECTORY
-			.on 'error', onError
-
-			.pipe template templateOptions
+			.pipe plugins.coffee()
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src '**/*.ls', cwd: SRC_DIRECTORY
+			.src '**/*.js', {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe template templateOptions
-			.on 'error', onError
-
-			.pipe liveScript()
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src '**/*.ts', cwd: SRC_DIRECTORY
+			.src '**/*.ls', {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
-			.pipe typeScript()
+			.pipe plugins.livescript()
+			.on 'error', onError
+
+	srcs.push src =
+		gulp
+			.src '**/*.ts', {cwd: SRC_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.template templateOptions
+			.on 'error', onError
+
+			.pipe plugins.typescript()
 			.on 'error', onError
 
 	es
@@ -959,22 +1037,16 @@ gulp.task 'plato', ['clean:working'], ->
 		.pipe gulp.dest DIST_DIRECTORY
 		.on 'error', onError
 
-		.pipe plato STATS_DIRECTORY, options.plato
+		.pipe plugins.plato STATS_DIRECTORY, options.plato
 		.on 'error', onError
 
 # Prepare for compilation
-gulp.task 'prepare', ['normalizeComponents', 'clean:working']
+gulp.task 'prepare', ['clean:working'].concat(if getBower then ['normalizeComponents'] else [])
 
 # Reload the app in the default browser
 gulp.task 'reload', ['build'], ->
-	sources = 'index.html'
-
-	gulp
-		.src sources, {cwd: DIST_DIRECTORY, read: false}
-		.on 'error', onError
-
-		.pipe connect.reload()
-		.on 'error', onError
+	browserSync.reload()
+	firstRun = false;
 
 # Compile Sass
 gulp.task 'sass', ['prepare'], ->
@@ -987,18 +1059,24 @@ gulp.task 'sass', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
 			.on 'error', onError
 
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
+			.on 'error', onError
+
+			.pipe plugins.newer TEMP_DIRECTORY
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
@@ -1008,14 +1086,14 @@ gulp.task 'sass', ['prepare'], ->
 		.merge.apply @, srcs
 		.on 'error', onError
 
-		.pipe sass options.sass
+		.pipe plugins.sass options.sass
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
 		.on 'error', onError
 
 # Process scripts
-gulp.task 'scripts', ['coffeeScript', 'javaScript', 'liveScript', 'typeScript'].concat(if isProd then 'templateCache' else []), ->
+gulp.task 'scripts', ['javaScript'].concat(LANGUAGES.SCRIPTS).concat(if isProd then 'templateCache' else []), ->
 	sources = do (ext ='.js') ->
 		SCRIPTS
 			.concat if not useBackendless then ["!**/angular-mocks#{ext}"] else []
@@ -1024,21 +1102,21 @@ gulp.task 'scripts', ['coffeeScript', 'javaScript', 'liveScript', 'typeScript'].
 
 	src =
 		gulp
-			.src sources, cwd: TEMP_DIRECTORY
+			.src sources, {cwd: TEMP_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	return if isProd
 		src
-			.pipe ngAnnotate()
+			.pipe plugins.ngannotate()
 			.on 'error', onError
 
-			.pipe concat SCRIPTS_MIN_FILE
+			.pipe plugins.concat SCRIPTS_MIN_FILE
 			.on 'error', onError
 
-			.pipe uglify()
+			.pipe plugins.uglify()
 			.on 'error', onError
 
-			.pipe rev()
+			.pipe plugins.rev()
 			.on 'error', onError
 
 			.on 'data', onRev
@@ -1058,9 +1136,8 @@ gulp.task 'scripts', ['coffeeScript', 'javaScript', 'liveScript', 'typeScript'].
 		.on 'error', onError
 
 # Start a web server without rebuilding
-gulp.task 'serve', ->
+gulp.task 'serve', ['build'], ->
 	startServer()
-	openApp()
 
 # Start a web server
 gulp.task 'server', ['build'], ->
@@ -1070,6 +1147,7 @@ gulp.task 'server', ['build'], ->
 gulp.task 'spa', ['scripts', 'styles'].concat(if isProd then 'templateCache' else 'views'), ->
 	options =
 		minifyHtml:
+			conditionals: true
 			empty: true
 			quotes: true
 		template: JSON.parse JSON.stringify templateOptions
@@ -1082,15 +1160,15 @@ gulp.task 'spa', ['scripts', 'styles'].concat(if isProd then 'templateCache' els
 
 	src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe template options.template
+			.pipe plugins.template options.template
 			.on 'error', onError
 
 	return if isProd
 		src
-			.pipe minifyHtml options.minifyHtml
+			.pipe plugins.minifyHtml options.minifyHtml
 			.on 'error', onError
 
 			.pipe gulp.dest DIST_DIRECTORY
@@ -1104,7 +1182,7 @@ gulp.task 'spa', ['scripts', 'styles'].concat(if isProd then 'templateCache' els
 gulp.task 'stats', ['plato']
 
 # Process styles
-gulp.task 'styles', ['less', 'css', 'sass'], ->
+gulp.task 'styles', ['css'].concat(LANGUAGES.STYLES), ->
 	options =
 		minifyCss:
 			keepSpecialComments: 0
@@ -1113,18 +1191,18 @@ gulp.task 'styles', ['less', 'css', 'sass'], ->
 
 	src =
 		gulp
-			.src sources, cwd: TEMP_DIRECTORY
+			.src sources, {cwd: TEMP_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 	return if isProd
 		src
-			.pipe concat STYLES_MIN_FILE
+			.pipe plugins.concat STYLES_MIN_FILE
 			.on 'error', onError
 
-			.pipe minifyCss options.minifyCss
+			.pipe plugins.minifycss options.minifyCss
 			.on 'error', onError
 
-			.pipe rev()
+			.pipe plugins.rev()
 			.on 'error', onError
 
 			.on 'data', onRev
@@ -1143,8 +1221,10 @@ gulp.task 'styles', ['less', 'css', 'sass'], ->
 		.pipe gulp.dest DIST_DIRECTORY
 		.on 'error', onError
 
+		.pipe plugins.gulpif injectCss, browserSync.reload {stream: true}
+
 # Compile templateCache
-gulp.task 'templateCache', ['haml', 'html', 'jade', 'markdown'], ->
+gulp.task 'templateCache', ['html'].concat(LANGUAGES.VIEWS), ->
 	options =
 		templateCache:
 			module: APP_NAME
@@ -1155,20 +1235,30 @@ gulp.task 'templateCache', ['haml', 'html', 'jade', 'markdown'], ->
 	]
 
 	gulp
-		.src sources, cwd: TEMP_DIRECTORY
+		.src sources, {cwd: TEMP_DIRECTORY, nodir: true}
 		.on 'error', onError
 
-		.pipe templateCache options.templateCache
+		.pipe plugins.templatecache options.templateCache
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
 		.on 'error', onError
 
 # Execute unit tests
-gulp.task 'test', ['build'], ->
+
+gulp.task 'test', ['e2e'], ->
 	# launch karma in a new process to avoid blocking gulp
 	command = windowsify '.\\node_modules\\.bin\\gulp.cmd', 'gulp'
-	spawn   = childProcess.spawn command, ['karma'], {stdio: 'inherit'}
+
+	# get args from parent process to pass on to child process
+	args  = ("--#{key}=#{value}" for own key, value of yargs.argv when key isnt '_' and key isnt '$0')
+	args  = ['karma'].concat args
+	karmaSpawn = childProcess.spawn command, args, {stdio: 'inherit'}
+
+	if citest
+		karmaSpawn.on 'exit', (code) ->
+			process.exit code if code
+			browserSync.exit()
 
 # Compile TypeScript
 gulp.task 'typeScript', ['prepare'], ->
@@ -1177,18 +1267,15 @@ gulp.task 'typeScript', ['prepare'], ->
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: SRC_DIRECTORY
+			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe gulp.dest TEMP_DIRECTORY
-			.on 'error', onError
-
-			.pipe template templateOptions
+			.pipe plugins.template templateOptions
 			.on 'error', onError
 
 	srcs.push src =
 		gulp
-			.src sources, cwd: COMPONENTS_DIRECTORY
+			.src sources, {cwd: COMPONENTS_DIRECTORY, nodir: true}
 			.on 'error', onError
 
 			.pipe gulp.dest TEMP_DIRECTORY
@@ -1198,21 +1285,27 @@ gulp.task 'typeScript', ['prepare'], ->
 		.merge.apply @, srcs
 		.on 'error', onError
 
-		.pipe typeScript()
+		.pipe plugins.newer TEMP_DIRECTORY
+		.on 'error', onError
+
+		.pipe gulp.dest TEMP_DIRECTORY
+		.on 'error', onError
+
+		.pipe plugins.typescript()
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY
 		.on 'error', onError
 
 # Process views
-gulp.task 'views', ['haml', 'html', 'jade', 'markdown'], ->
+gulp.task 'views', ['html'].concat(LANGUAGES.VIEWS), ->
 	sources = [
 		'**/*.html'
 		'!index.html'
 	]
 
 	gulp
-		.src sources, cwd: TEMP_DIRECTORY
+		.src sources, {cwd: TEMP_DIRECTORY, nodir: true}
 		.on 'error', onError
 
 		.pipe gulp.dest DIST_DIRECTORY
@@ -1227,13 +1320,21 @@ gulp.task 'watch', ['build'], ->
 		.concat EXTENSIONS.IMAGES.COMPILED
 		.concat EXTENSIONS.SCRIPTS.COMPILED
 		.concat EXTENSIONS.SCRIPTS.UNCOMPILED
-		.concat EXTENSIONS.STYLES.COMPILED
-		.concat EXTENSIONS.STYLES.UNCOMPILED
 		.concat EXTENSIONS.VIEWS.COMPILED
 		.concat EXTENSIONS.VIEWS.UNCOMPILED
 
-	sources = [].concat ("**/*#{extension}" for extension in extensions)
+	stylesExtensions = []
+		.concat EXTENSIONS.STYLES.COMPILED
+		.concat EXTENSIONS.STYLES.UNCOMPILED
 
-	gulp
-		.watch sources, {cwd: SRC_DIRECTORY, maxListeners: 999}, tasks
+	sources = [].concat ("**/*#{extension}" for extension in extensions)
+	stylesSources = [].concat ("**/*#{extension}" for extension in stylesExtensions)
+
+	watcher = gulp.watch sources, {cwd: SRC_DIRECTORY, maxListeners: 999}, tasks
+	watcher = gulp.watch sources, {cwd: E2E_DIRECTORY, maxListeners: 999}, ['test']
+	stylesWater = gulp.watch stylesSources, {cwd: SRC_DIRECTORY, maxListeners: 999}, [].concat(if injectCss then ['build'] else ['reload'])
+
+	watcher
+		.on 'change', (event) ->
+			firstRun = true if event.type is 'deleted'
 		.on 'error', onError
