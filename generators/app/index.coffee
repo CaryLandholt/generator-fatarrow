@@ -83,6 +83,8 @@ class Generator extends Base
 
 	config: ->
 		@copy '_config.coffee', 'config.coffee'
+		@copy '_protractor.config.coffee', 'protractor.config.coffee'
+
 
 	bower: ->
 		@copy 'bowerrc', '.bowerrc'
