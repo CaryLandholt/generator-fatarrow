@@ -75,9 +75,6 @@ class Generator extends Base
 			@directory 'src/app', 'src/app', true
 			@directory 'src/home', 'src/home', true
 
-		@copy 'home/_home.html', 'src/home/home.html'
-		@copy 'home/_homeController.coffee', 'src/home/homeController.coffee'
-
 		@directory 'e2e', 'e2e', true
 		@copy '_README.md', 'README.md'
 
