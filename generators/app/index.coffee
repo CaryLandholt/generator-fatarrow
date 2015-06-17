@@ -1,3 +1,4 @@
+_      = require 'underscore'
 chalk  = require 'chalk'
 logo   = require 'fatarrow-ascii-art'
 path   = require 'path'
@@ -36,35 +37,78 @@ class Generator extends Base
 			name    : 'appdescription'
 			message : 'Please provide a description for your app.'
 			default : 'a fatarrow app'
-		]
-
-		###
 		,
-			name    : 'features'
+			name    : 'includeExamples'
+			message : 'Would you like code examples?'
+			default : true
+		,
+			name    : 'scriptLanguages'
 			type    : 'checkbox'
-			message : 'What more would you like?'
+			message : 'What scripting languages would you like?'
 			choices: [
-				value   : 'includeTwitterBootstrap'
-				name    : 'Twitter Bootstrap'
+				value   : 'javaScript'
+				name    : 'JavaScript'
 				checked : true
 			,
-				value   : 'includeExamples'
-				name    : 'Examples'
+				value   : 'coffeeScript'
+				name    : 'CoffeeScript'
 				checked : true
+			,
+				value   : 'babel'
+				name    : 'Babel'
+				checked : false
+			,
+				value   : 'liveScript'
+				name    : 'LiveScript'
+				checked : false
+			,
+				value   : 'typeScript'
+				name    : 'TypeScript'
+				checked : false
 			]
-		###
+		,
+			name    : 'styleLanguages'
+			type    : 'checkbox'
+			message : 'What styling languages would you like?'
+			choices: [
+				value   : 'less'
+				name    : 'Less'
+				checked : true
+			,
+				value   : 'sass'
+				name    : 'Sass'
+				checked : false
+			]
+		,
+			name    : 'templateLanguages'
+			type    : 'checkbox'
+			message : 'What templating languages would you like?'
+			choices: [
+				value   : 'haml'
+				name    : 'Haml'
+				checked : false
+			,
+				value   : 'jade'
+				name    : 'Jade'
+				checked : true
+			,
+				value   : 'makdown'
+				name    : 'Markdown'
+				checked : false
+			]
+		]
 
 		hasFeature = (features, feature) ->
 			features.indexOf(feature) isnt -1
 
 		@prompt prompts, (props) =>
-			# features                 = props.features
 			@appdescription          = props.appdescription
 			@appname                 = props.appname
 			@includeTwitterBootstrap = true
-			@includeExamples         = true
-			# @includeTwitterBootstrap = hasFeature features, 'includeTwitterBootstrap'
-			# @includeExamples         = hasFeature features, 'includeExamples'
+			@includeExamples         = props.includeExamples
+			@scriptLanguages         = props.scriptLanguages
+			@styleLanguages          = props.styleLanguages
+			@templateLanguages       = props.templateLanguages
 
 			done()
 
@@ -79,7 +123,7 @@ class Generator extends Base
 		@copy '_README.md', 'README.md'
 
 	config: ->
-		@copy '_config.coffee', 'config.coffee'
+		@template '_config.coffee', 'config.coffee'
 		@copy '_protractor.config.coffee', 'protractor.config.coffee'
 
 
@@ -91,8 +135,18 @@ class Generator extends Base
 
 	npm: ->
 		context =
-			appdescription : @appdescription
-			appname        : @appname
+			appdescription       : @appdescription
+			appname              : @appname
+			scriptLanguages      : @scriptLanguages
+			includeCoffeeScript  : _.some @scriptLanguages, (x) -> x is 'coffeeScript'
+			includeBabel         : _.some @scriptLanguages, (x) -> x is 'babel'
+			includeTypeScript    : _.some @scriptLanguages, (x) -> x is 'typeScript'
+			includeLiveScript    : _.some @scriptLanguages, (x) -> x is 'liveScript'
+			includeLess          : _.some @scriptLanguages, (x) -> x is 'less'
+			includeSass          : _.some @scriptLanguages, (x) -> x is 'sass'
+			includeHaml          : _.some @scriptLanguages, (x) -> x is 'haml'
+			includeJade          : _.some @scriptLanguages, (x) -> x is 'jade'
+			includeMarkdown      : _.some @scriptLanguages, (x) -> x is 'markdown'
 
 		@template '_package.json', 'package.json', context
 
