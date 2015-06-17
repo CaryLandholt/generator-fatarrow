@@ -44,12 +44,8 @@ class Generator extends Base
 		,
 			name    : 'scriptLanguages'
 			type    : 'checkbox'
-			message : 'What scripting languages would you like?'
+			message : 'What scripting languages in addition to JavaScript would you like?'
 			choices: [
-				value   : 'javaScript'
-				name    : 'JavaScript'
-				checked : true
-			,
 				value   : 'coffeeScript'
 				name    : 'CoffeeScript'
 				checked : true
@@ -69,11 +65,15 @@ class Generator extends Base
 		,
 			name    : 'styleLanguages'
 			type    : 'checkbox'
-			message : 'What styling languages would you like?'
+			message : 'What styling languages in addition to CSS would you like?'
 			choices: [
+				value   : 'css'
+				name    : 'CSS'
+				checked : true
+			,
 				value   : 'less'
 				name    : 'Less'
-				checked : true
+				checked : false
 			,
 				value   : 'sass'
 				name    : 'Sass'
@@ -82,15 +82,19 @@ class Generator extends Base
 		,
 			name    : 'templateLanguages'
 			type    : 'checkbox'
-			message : 'What templating languages would you like?'
+			message : 'What templating languages in addition to HTML would you like?'
 			choices: [
+				value   : 'html'
+				name    : 'HTML'
+				checked : true
+			,
 				value   : 'haml'
 				name    : 'Haml'
 				checked : false
 			,
 				value   : 'jade'
 				name    : 'Jade'
-				checked : true
+				checked : false
 			,
 				value   : 'makdown'
 				name    : 'Markdown'
