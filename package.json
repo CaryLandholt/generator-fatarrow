@@ -1,52 +1,52 @@
 {
-  "name": "generator-fatarrow",
-  "version": "0.16.0",
-  "description": "Yeoman generator",
-  "author": {
-    "name": "Cary Landholt",
-    "email": "cary@landholt.com",
-    "url": "https://github.com/CaryLandholt"
-  },
-  "repository": {
-    "type": "git",
-    "url": "CaryLandholt/generator-fatarrow"
-  },
-  "main": "app/index",
-  "keywords": [
-    "yeoman-generator",
-    "fatarrow",
-    "angular",
-    "angularjs",
-    "seed",
-    "coffeescript",
-    "coffee-script",
-    "ng-classify"
-  ],
-  "engines": {
-    "node": ">=0.10.0"
-  },
-  "dependencies": {
-    "chalk": "0.5.1",
-    "coffee-script": "^1.7.1",
-    "fatarrow-ascii-art": "^1.0.0",
-    "underscore": "^1.6.0",
-    "underscore.string": "^2.3.3",
-    "yeoman-generator": "0.17.3"
-  },
-  "devDependencies": {
-    "conventional-changelog": "0.0.11",
-    "gulp": "^3.8.6",
-    "gulp-util": "^3.0.0",
-    "mocha": "^1.20.1"
-  },
-  "peerDependencies": {
-    "gulp": "^3.8.6",
-    "yo": "^1.2.0"
-  },
-  "scripts": {
-    "test": "mocha"
-  },
-  "files": [
-    "generators"
-  ]
+	"name": "generator-fatarrow",
+	"version": "0.15.2",
+	"description": "Yeoman generator",
+	"author": {
+		"name": "Cary Landholt",
+		"email": "cary@landholt.com",
+		"url": "https://github.com/CaryLandholt"
+	},
+	"repository": {
+		"type": "git",
+		"url": "CaryLandholt/generator-fatarrow"
+	},
+	"main": "app/index",
+	"keywords": [
+		"yeoman-generator",
+		"fatarrow",
+		"angular",
+		"angularjs",
+		"seed",
+		"coffeescript",
+		"coffee-script",
+		"ng-classify"
+	],
+	"engines": {
+		"node": ">=0.10.0"
+	},
+	"dependencies": {
+		"chalk": "0.5.1",
+		"coffee-script": "^1.7.1",
+		"fatarrow-ascii-art": "^1.0.0",
+		"underscore": "^1.6.0",
+		"underscore.string": "^2.3.3",
+		"yeoman-generator": "0.17.3"
+	},
+	"devDependencies": {
+		"conventional-changelog": "0.0.11",
+		"gulp": "^3.8.6",
+		"gulp-util": "^3.0.0",
+		"mocha": "^1.20.1"
+	},
+	"peerDependencies": {
+		"gulp": "^3.8.6",
+		"yo": "^1.2.0"
+	},
+	"scripts": {
+		"test": "mocha"
+	},
+	"files": [
+		"generators"
+	]
 }
