@@ -39,6 +39,7 @@ class Generator extends Base
 			default : 'a fatarrow app'
 		,
 			name    : 'includeExamples'
+			type    : 'confirm'
 			message : 'Would you like code examples?'
 			default : true
 		,
@@ -67,10 +68,6 @@ class Generator extends Base
 			type    : 'checkbox'
 			message : 'What styling languages in addition to CSS would you like?'
 			choices: [
-				value   : 'css'
-				name    : 'CSS'
-				checked : true
-			,
 				value   : 'less'
 				name    : 'Less'
 				checked : false
@@ -84,10 +81,6 @@ class Generator extends Base
 			type    : 'checkbox'
 			message : 'What templating languages in addition to HTML would you like?'
 			choices: [
-				value   : 'html'
-				name    : 'HTML'
-				checked : true
-			,
 				value   : 'haml'
 				name    : 'Haml'
 				checked : false
@@ -117,19 +110,21 @@ class Generator extends Base
 			done()
 
 	scaffold: ->
+		includeCoffeeScript = _.some @scriptLanguages, (x) -> x is 'coffeeScript'
 		if @includeExamples
-			@directory 'src', 'src', true
+			if includeCoffeeScript
+				folder = './templates/coffescript/examples'
 		else
-			@directory 'src/app', 'src/app', true
-			@directory 'src/home', 'src/home', true
+			if includeCoffeeScript
+				folder = './templates/coffescript/basic'
 
+		@directory 'src', 'src', true
 		@directory 'e2e', 'e2e', true
-		@copy '_README.md', 'README.md'
 
 	config: ->
 		@template '_config.coffee', 'config.coffee'
 		@copy '_protractor.config.coffee', 'protractor.config.coffee'
-
+		@copy '_README.md', 'README.md'
 
 	bower: ->
 		@copy 'bowerrc', '.bowerrc'
