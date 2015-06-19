@@ -111,12 +111,13 @@ class Generator extends Base
 
 	scaffold: ->
 		if @includeExamples
-			@directory 'src', 'src', true
+			@directory 'coffeescript/src', 'src', true
 		else
-			@directory 'src/app', 'src/app', true
-			@directory 'src/home', 'src/home', true
+			@directory 'coffeescript/src/app', 'src/app', true
+			@directory 'coffeescript/src/components/markdown', 'src/components/markdown', true
+			@copy 'coffeescript/src/index.html', 'src/index.html', true
 
-		@directory 'e2e', 'e2e', true
+		@directory 'coffeescript/e2e', 'e2e', true
 		@copy '_README.md', 'README.md'
 
 	config: ->
