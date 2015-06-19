@@ -110,14 +110,27 @@ class Generator extends Base
 			done()
 
 	scaffold: ->
+		includeCoffeeScript = _.some @scriptLanguages, (x) -> x is 'coffeeScript'
 		if @includeExamples
-			@directory 'coffeescript/src', 'src', true
+			if includeCoffeeScript
+				@directory 'coffeescript/src', 'src', true
+			else
+				@directory 'javascript/src', 'src', true
 		else
-			@directory 'coffeescript/src/app', 'src/app', true
-			@directory 'coffeescript/src/components/markdown', 'src/components/markdown', true
-			@copy 'coffeescript/src/index.html', 'src/index.html', true
+			if includeCoffeeScript
+				@directory 'coffeescript/src/app', 'src/app', true
+				@directory 'coffeescript/src/components/markdown', 'src/components/markdown', true
+				@copy 'coffeescript/src/index.html', 'src/index.html', true
+			else
+				@directory 'javascript/src', 'src', true
 
-		@directory 'coffeescript/e2e', 'e2e', true
+		@log 'includeCoffeeScript', includeCoffeeScript
+
+		if includeCoffeeScript
+			@directory 'coffeescript/e2e', 'e2e', true
+		else
+			@directory 'javascript/e2e', 'e2e', true
+
 		@copy '_README.md', 'README.md'
 
 	config: ->
