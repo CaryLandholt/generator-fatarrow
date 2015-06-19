@@ -1,7 +1,7 @@
 {
-  "name": "fatarrow",
+  "name": "<%= appname %>",
   "version": "1.1.0",
-  "description": "AngularJS Reference Architecture",
+  "description": "<%= appdescription %>",
   "author": {
     "name": "Cary Landholt",
     "email": "cary@landholt.com",
@@ -23,33 +23,35 @@
     "event-stream": "^3.1.5",
     "gulp": "^3.8.5",
     "gulp-angular-templatecache": "^1.2.1",
-    "gulp-babel": "^5.1.0",
+    <% if(includeBabel) { %>"gulp-babel": "^5.1.0",<% } %>
+    <% if(includeCoffeeScript) { %>
     "gulp-coffee": "^2.0.1",
     "gulp-coffeelint": "0.4.0",
+    <% } %>
     "gulp-concat": "^2.4.2",
     "gulp-flatten": "0.0.4",
-    "gulp-haml": "0.1.1",
+    <% if(includeHaml) { %>"gulp-haml": "0.1.1",<% } %>
     "gulp-if": "^1.2.5",
     "gulp-imagemin": "^2.0.0",
-    "gulp-jade": "0.10.0",
+    <% if(includeHaml) { %>"gulp-jade": "0.10.0",<% } %>
     "gulp-jshint": "^1.6.3",
     "gulp-less": "^3.0.0",
-    "gulp-livescript": "^2.2.1",
+    <% if(includeLiveScript) { %>"gulp-livescript": "^2.2.1",<% } %>
     "gulp-load-plugins": "^0.10.0",
-    "gulp-markdown": "^1.0.0",
+    <% if(includeMarkdown) { %>"gulp-markdown": "^1.0.0",<% } %>
     "gulp-minify-css": "0.3.11",
     "gulp-minify-html": "0.1.7",
     "gulp-newer": "^0.5.0",
     "gulp-ng-annotate": "0.4.3",
-    "gulp-ng-classify": "^4.0.0",
+    <% if(includeCoffeeScript) { %>"gulp-ng-classify": "^4.0.0",<% } %>
     "gulp-plato": "^1.0.0",
     "gulp-protractor": "^1.0.0",
     "gulp-rev": "^2.0.1",
     "gulp-rimraf": "0.1.1",
-    "gulp-sass": "^1.0.0",
+    <% if(includeSass) { %>"gulp-sass": "^1.0.0",<% } %>
     "gulp-sourcemaps": "^1.1.0",
     "gulp-template": "^1.0.0",
-    "gulp-typescript": "^2.0.0",
+    <% if(includeTypeScript) { %>"gulp-typescript": "^2.0.0",<% } %>
     "gulp-uglify": "^1.0.1",
     "gulp-util": "^3.0.0",
     "karma": "0.12.28",
