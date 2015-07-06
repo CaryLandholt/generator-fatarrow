@@ -6,6 +6,6 @@ class App extends App
 			'angular-loading-bar'
 		]
 
-		dependencies.push('ngMockE2E') if '<%= useBackendless %>' is 'true'
+		dependencies.push('ngMockE2E') if '<%%= useBackendless %>' is 'true'
 
 		return dependencies

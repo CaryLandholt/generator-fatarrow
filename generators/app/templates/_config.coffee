@@ -22,13 +22,12 @@ BOWER_COMPONENTS =
 		scripts: 'src/showdown.js'
 
 LANGUAGES =
-	SCRIPTS: <%= JSON.stringify(scriptLanguages) %>
-	STYLES: <%= JSON.stringify(styleLanguages) %>
-	VIEWS: <%= JSON.stringify(templateLanguages) %>
+	SCRIPTS: <%- JSON.stringify(scriptLanguages) %>
+	STYLES: <%- JSON.stringify(styleLanguages) %>
+	VIEWS: <%- JSON.stringify(templateLanguages) %>
 
 PROXY_CONFIG = [
-	route: '/api'
-	url: 'http://localhost:8182/api'
+	'^/api$ http://localhost:8182/api [P, L]'
 ]
 
 SCRIPTS = [

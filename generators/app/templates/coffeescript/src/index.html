@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:ng="http://angularjs.org" xmlns:app="ignored" <% if (typeof appName === 'undefined') { %>ng-app="app"<% } else { %><% if (!!appName) { %>ng-app="<%= appName %>"<% } %><% } %>>
+<html xmlns:ng="http://angularjs.org" xmlns:app="ignored" <%% if (typeof appName === 'undefined') { %>ng-app="app"<%% } else { %><%% if (!!appName) { %>ng-app="<%%= appName %>"<%% } %><%% } %>>
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -12,8 +12,8 @@
 		<script>(function(w){if(w.top===w.self){var a=w.document.getElementById('antiClickjack');a.parentNode.removeChild(a);}else{w.top.location=w.self.location;}}(window));</script>
 		<!-- ClickJacking Defense end -->
 
-		<% _.forEach(styles, function (style) { %><link rel="stylesheet" href="<%= style %>" />
-		<% }); %>
+		<%% _.forEach(styles, function (style) { %><link rel="stylesheet" href="<%%= style %>" />
+		<%% }); %>
 
 		<!-- When you load angular at the bottom, you need to create the "ng-cloak" rules yourself -->
 		<style>[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak{display:none;}ng\:form{display:block;}</style>
@@ -21,7 +21,7 @@
 	<body ng-cloak class="ng-cloak">
 		<ng:view></ng:view>
 
-		<% _.forEach(scripts, function (script) { %><script src="<%= script %>"></script>
-		<% }); %>
+		<%% _.forEach(scripts, function (script) { %><script src="<%%= script %>"></script>
+		<%% }); %>
 	</body>
 </html>

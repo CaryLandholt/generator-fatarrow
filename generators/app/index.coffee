@@ -8,25 +8,23 @@ Base  = yeoman.generators.Base
 check = chalk.green '✓'
 
 class Generator extends Base
-	init: ->
+	initializing: ->
 		@pkg = require '../../package.json'
+		@npmInstall()
 
-		@on 'end', ->
-			cb = =>
-				@log()
-				@log logo
-				@log()
-				@log chalk.magenta "Just type 'gulp' to fire up '#{@appname}'!"
-				@log()
-
-			@installDependencies callback: cb unless @options['skip-install']
+	end: ->
+		@log()
+		@log logo
+		@log()
+		@log chalk.magenta "Just type 'gulp' to fire up '#{@appname}'!"
+		@log()
 
 	splash: ->
 		@log logo
 		@log chalk.magenta 'Get ready to create your fatarrow app!'
 		@log()
 
-	askFor: ->
+	prompting: ->
 		done = @async()
 
 		prompts = [
@@ -124,8 +122,6 @@ class Generator extends Base
 			else
 				@directory 'javascript/src', 'src', true
 
-		@log 'includeCoffeeScript', includeCoffeeScript
-
 		if includeCoffeeScript
 			@directory 'coffeescript/e2e', 'e2e', true
 		else
@@ -142,6 +138,7 @@ class Generator extends Base
 		@copy 'bowerrc', '.bowerrc'
 
 	gulp: ->
+		@directory 'tasks', 'tasks'
 		@copy 'gulpfile.coffee', 'gulpfile.coffee'
 
 	npm: ->
@@ -153,11 +150,13 @@ class Generator extends Base
 			includeBabel         : _.some @scriptLanguages, (x) -> x is 'babel'
 			includeTypeScript    : _.some @scriptLanguages, (x) -> x is 'typeScript'
 			includeLiveScript    : _.some @scriptLanguages, (x) -> x is 'liveScript'
-			includeLess          : _.some @scriptLanguages, (x) -> x is 'less'
-			includeSass          : _.some @scriptLanguages, (x) -> x is 'sass'
-			includeHaml          : _.some @scriptLanguages, (x) -> x is 'haml'
-			includeJade          : _.some @scriptLanguages, (x) -> x is 'jade'
-			includeMarkdown      : _.some @scriptLanguages, (x) -> x is 'markdown'
+			includeLess          : _.some @styleLanguages, (x) -> x is 'less'
+			includeSass          : _.some @styleLanguages, (x) -> x is 'sass'
+			includeHaml          : _.some @templateLanguages, (x) -> x is 'haml'
+			includeJade          : _.some @templateLanguages, (x) -> x is 'jade'
+			includeMarkdown      : _.some @templateLanguages, (x) -> x is 'markdown'
+
+		console.log 'includeJade', context.includeJade
 
 		@template '_package.json', 'package.json', context
 

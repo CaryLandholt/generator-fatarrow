@@ -1,92 +1,166 @@
 # generator-fatarrow
+###An [AngularJS](http://angularjs.org/) application Reference Architecture
 [![License][license-image]][license-url]
 [![Version][version-image]][version-url]
 [![Build Status][build-image]][build-url]
 [![Dependency Status][dependencies-image]][dependencies-url]
-> An [AngularJS](http://angularjs.org/) large application Reference Architecture
 
-> <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/AngularJS_logo.svg/695px-AngularJS_logo.svg.png" height="100px" />
-
-> <img src="http://www.jqueryscript.net/images/collective/gulp.js.png" height="100px" />
-> <img src="http://bower.io/img/bower-logo.png" height="100px" />
-> <img src="http://onesime.fr/images/yeoman.svg" height="100px" />
-> <img src="http://jasmine.github.io/images/jasmine-horizontal.svg" height="100px" />
-> <img src="http://pascalprecht.github.io/full-spectrum-testing-slides/styles/karma-logo.svg" height="100px" />
-> <img src="http://pascalprecht.github.io/full-spectrum-testing-slides/styles/protractor-logo-large.png" height="100px" />
-
-Build large [AngularJS](http://angularjs.org/) applications with [CoffeeScript](http://coffeescript.org/) - **without the ceremony** or write plain old JavaScript.
-
-
-## Install
-Install with [npm](https://npmjs.org/package/generator-fatarrow)
-
-```bash
-$ npm install -g generator-fatarrow
-```
-
-
-## Usage
-Make a new directory, and `cd` into it:
-
-```bash
-$ mkdir my-project && cd $_
-```
-
-Create your app:
-
-```bash
-$ yo fatarrow
-```
-
-Run your app:
-
-```bash
-$ gulp
-```
-
+Build [AngularJS](http://angularjs.org/) applications with [CoffeeScript](http://coffeescript.org/) - **without the ceremony**. By the way, you can write JavaScript too.
 
 ## Table of Contents
-* [Install](#install)
-* [Usage](#usage)
-* [Generators](#generators)
-	- [fatarrow](#fatarrow)
-	- [fatarrow:feature](#fatarrowfeature)
-* [Configuration](#configuration)
-	- [Add Bower Component](#add-bower-component)
-* [Supported Technologies](#supported-technologies)
+* [Installing](#installing)
+* [Running](#running)
+* [Scripting](#scripting)
+* [Styling](#styling)
+* [Templating](#templating)
+* [Structure](#structure)
+* [Features](#features)
 * [Contributing](#contributing)
 * [Changelog](#changelog)
 * [License](#license)
 
 
-## Generators
+## Installing
+Before running, you must install and configure the following one-time dependencies:
 
+* [Git](http://git-scm.com/)
+* [Node.js](http://nodejs.org/)
 
-### fatarrow
-Scaffold your app
+Enter the following in the terminal
 
 ```bash
+$ npm install -g gulp yo bower
+$ npm install -g generator-fatarrow
+$ mkdir my-new-project && cd $_
 $ yo fatarrow
 ```
 
+## Running
+Here are some useful commands to get started:
 
-### fatarrow:feature
-Create a new feature
-
-```bash
-$ yo fatarrow:feature {featureName}
-```
-
-The following will create a feature named **login** within the **user** directory.
+Get all commands and options by typing
 
 ```bash
-$ yo fatarrow:feature user/login
+$ gulp help
 ```
 
+Running with With a fake backend ( [$httpBackend](https://docs.angularjs.org/api/ngMockE2E/service/$httpBackend))
+```bash
+$ gulp
+```
+With a real backend (gulp will proxy calls to the backend of your choice)
+```bash
+$ gulp --backend
+```
+Build for production
+```bash
+$ gulp --prod --no-serve
+```
+Run tests on your build server
+```bash
+$ gulp test --citest --no-open
+```
 
-## Configuration
-fatarrow is configured via a single file - `config.coffee`
+## Scripting
+Your choice of scripting languages.
 
+* **[Babel](https://babeljs.io/)**
+* **[CoffeeScript](coffeescript.org)**
+* **[LiveScript](livescript.net)**
+* **JavaScript**
+* **[TypeScript](http://www.typescriptlang.org/)**
+
+## Styling
+Your choice of styling languages.
+
+* **CSS**
+* **[LESS](http://lesscss.org/)**
+* **[Sass](http://sass-lang.com/)**
+
+## Templating
+Your choice of templating engines.
+
+* **HTML**
+* **[Haml](http://haml.info/)**
+* **[Jade](http://jade-lang.com/)**
+* **[Markdown](http://daringfireball.net/projects/markdown/)**
+
+## Structure
+- File extensions supported by fatarrow:
+  - Scripts: `.coffee`, `.js`, `.ls`, `.ts`, `.es6`
+  - Styles: `.less`, `.css`, `.scss`
+  - Templates: `.html`, `.haml`, `.jade`
+
+**(Note: to keep the example succint, `.coffee`, `.html` and `.less` extension is used below. However, all of the file extensions listed above can be used, and even can be mixed-and-matched. )**
+
+The root directory generated for a fatarrow app:
+<pre>
+├──  src/
+│   ├──  components/
+│   │   └──  comp/
+│   │   │   ├──  test
+│   │   │   ├──  └──  comp.spec.coffee
+│   │   │   ├──  comp.coffee
+│   │   │   └──  comp.html
+│   │   │   └──  comp.backend.coffee
+│   │   │   └──  comp.less
+│   ├──  app/
+│   │   ├──  app.coffee
+│   │   ├──  appRoutes.coffee
+│   │   └──  views.backend.coffee
+│   ├──  home/
+│   │   ├──  homeController.coffee
+│   │   ├──  homeRoutes.coffee
+│   │   └──  home.html
+│   ├──  img/
+│   │   └──  angularjs.jpg
+│   └──  index.html
+├──  tasks/
+├──  e2e/
+│   ├──  home/
+│   │   ├──  home.spec.coffee
+│   │   ├──  homePage.coffee
+├──  bower_components/
+├──  nodes_modules/
+├──  .bowerrc
+├──  .gitignore
+├──  bower.json
+├──  gulpfile.coffee
+├──  protractor.conf.coffee
+├──  package.json
+</pre>
+
+Explanation of the folders:
+- *`app`*: Angular module for the app. All app level config should go here.
+- *`home`*: Each feature of the app should go in its own folder. It should contain all scripts, styles, templates and tests within the feature folder.
+- *`components`*: Reusable components (directives, factories, styles, etc.)
+- *`e2e`*: Protractor tests. They should also be separated by features/components.
+
+## Features
+- *Fake data*: Running `gulp` will include the `.backend.coffee` files and therefore Angular's $httpBackend will be utilized. This should be used for backendless development.
+- *Real data*: Running `gulp --backend` will proxy all backend calls to the backend of your choice. [See below](#conf) for configuration instructions.
+- *Production build*: Running `gulp --prod` will produce builds for production. This includes:
+	- *ngAnnotate* : make your angular code minification proof
+	- *[ngClassify](https://github.com/CaryLandholt/ng-classify)* : CoffeeScript classes for angular
+	- *minification* : JS, CSS and HTML
+	- *image minification*: images from teh `img` folder are compressed
+	- *rev*: minified files are rev'ed for browser cache busting
+	- *templatecache* : take all angular templates and include them in the minified scripts
+- *Dev Workflow*:
+	- *watch* : watch your `src` folder and rebuild and reload automatically
+	- *linting* : lint `.js` and `.coffee` files
+	- *test* : run e2e (protractor) and unit (karma) tests
+	- *[browserSync](http://www.browsersync.io/)* : test on multiple devices simultaneously
+	- *newer*: only process changed files
+
+## Configuration<a name="conf"></a>
+### `config.coffee`
+- *`APP_NAME`*: name of the angular module for the app
+- *`BOWER_COMPONENTS`*: consume dependencies from bower by specifying dependency name, version, dependency type (scripts, styles, etc.) and a list of files to be consumed (cherry picking files).
+- *`LANGUAGES`*: disable compilers not in use to optimize your build
+- *`PROXY_CONFIG`*: [connect-modrewrite](https://www.npmjs.com/package/connect-modrewrite) config to proxy api calls during development.
+- *`SCRIPTS`*: load order for scripts
+- *`STYLES`*: load order for styles
 
 ### Add Bower Component
 You need three pieces of information for each Bower component to include in your app.
@@ -117,45 +191,6 @@ For AngularJS components, include a reference to the module within your applicat
 ```coffee
 angular.module('app', ['restangular']);
 ```
-
-
-## Supported Technologies
-Use your choice of scripting, styling, and templating technologies.
-
-
-### Scripting
-Your choice of scripting languages.
-
-* <img src="http://drtom.ch/talks/2012/06/jazoon/images/coffeescript_logo.svg" height="100px" />
-
-* **LiveScript** <img src="http://livescript.net/images/icon.png" height="16px" />
-
-* <img src="http://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" height="100px" />
-
-* <img src="http://www.typescriptlang.org/content/images/logo_small.png" height="100px" />
-
-
-### Styling
-Your choice of styling languages.
-
-* <img src="http://www.logotypes101.com/logos/194/830812341256B99B32E1A9F242BB9F5F/css3logo.png" height="100px" />
-
-* <img src="http://moduscreate.com/wp-content/uploads/2012/01/less-css-logo.png" height="100px" />
-
-* <img src="http://sass-lang.com/assets/img/logos/logo-235e394c.png" height="100px" />
-
-
-### Templating
-Your choice of templating engines.
-
-* <img src="http://haml.info/images/haml.png" height="100px" />
-
-* <img src="http://www.w3.org/html/logo/downloads/HTML5_Logo_512.png" height="100px" />
-
-* <img src="http://jade-lang.com/public/images/logo.png" height="100px" />
-
-* <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Markdown-mark.svg/208px-Markdown-mark.svg.png" height="100px" />
-
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md)

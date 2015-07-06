@@ -26,18 +26,18 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
-    "chalk": "0.5.1",
+    "chalk": "^1.1.0",
     "coffee-script": "^1.7.1",
     "fatarrow-ascii-art": "^1.0.0",
     "underscore": "^1.6.0",
-    "underscore.string": "^2.3.3",
-    "yeoman-generator": "0.17.3"
+    "underscore.string": "^3.1.1",
+    "yeoman-generator": "0.20.1"
   },
   "devDependencies": {
-    "conventional-changelog": "0.0.11",
+    "conventional-changelog": "^0.0.17",
     "gulp": "^3.8.6",
     "gulp-util": "^3.0.0",
-    "mocha": "^1.20.1"
+    "mocha": "^2.2.5"
   },
   "peerDependencies": {
     "gulp": "^3.8.6",
