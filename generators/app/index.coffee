@@ -87,7 +87,7 @@ class Generator extends Base
 				name    : 'Jade'
 				checked : false
 			,
-				value   : 'makdown'
+				value   : 'markdown'
 				name    : 'Markdown'
 				checked : false
 			]
@@ -155,8 +155,6 @@ class Generator extends Base
 			includeHaml          : _.some @templateLanguages, (x) -> x is 'haml'
 			includeJade          : _.some @templateLanguages, (x) -> x is 'jade'
 			includeMarkdown      : _.some @templateLanguages, (x) -> x is 'markdown'
-
-		console.log 'includeJade', context.includeJade
 
 		@template '_package.json', 'package.json', context
 
