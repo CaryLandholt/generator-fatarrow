@@ -26,7 +26,7 @@ gulp.task 'build', ['spa', 'fonts', 'images'], taskRequire './tasks/build'
 # Generate CHANGELOG
 gulp.task 'changelog', ['normalizeComponents', 'stats'], taskRequire './tasks/changelog/changelog'
 # Clean all build directories
-gulp.task 'clean:bower', taskRequire './tasks/clean/clean'
+gulp.task 'clean:bower', taskRequire './tasks/clean/cleanBower'
 
 # Clean working directories
 gulp.task 'clean:working', taskRequire './tasks/clean/cleanWorking'
