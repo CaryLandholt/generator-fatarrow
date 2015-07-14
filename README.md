@@ -1,4 +1,4 @@
-# generator-fatarrow
+# fatarrow
 ###An [AngularJS](http://angularjs.org/) application Reference Architecture
 [![License][license-image]][license-url]
 [![Version][version-image]][version-url]
@@ -6,6 +6,7 @@
 [![Dependency Status][dependencies-image]][dependencies-url]
 
 Build [AngularJS](http://angularjs.org/) applications with [CoffeeScript](http://coffeescript.org/) - **without the ceremony**. By the way, you can write JavaScript too.
+
 
 ## Table of Contents
 * [Installing](#installing)
@@ -15,6 +16,7 @@ Build [AngularJS](http://angularjs.org/) applications with [CoffeeScript](http:/
 * [Templating](#templating)
 * [Structure](#structure)
 * [Features](#features)
+* [Configuration](#conf)
 * [Contributing](#contributing)
 * [Changelog](#changelog)
 * [License](#license)
@@ -28,11 +30,20 @@ Before running, you must install and configure the following one-time dependenci
 
 Enter the following in the terminal
 
+Option 1: Using Yeoman Generator (Recommended)
 ```bash
 $ npm install -g gulp yo bower
 $ npm install -g generator-fatarrow
 $ mkdir my-new-project && cd $_
 $ yo fatarrow
+```
+
+Option 2: Clone this repo
+```bash
+$ npm install -g gulp
+$ git clone git@github.com:CaryLandholt/fatarrow.git
+$ cd fatarrow
+$ npm install
 ```
 
 ## Running
@@ -44,7 +55,7 @@ Get all commands and options by typing
 $ gulp help
 ```
 
-Running with With a fake backend ( [$httpBackend](https://docs.angularjs.org/api/ngMockE2E/service/$httpBackend))
+Running with With a fake backend ([$httpBackend](https://docs.angularjs.org/api/ngMockE2E/service/$httpBackend))
 ```bash
 $ gulp
 ```
@@ -60,14 +71,23 @@ Run tests on your build server
 ```bash
 $ gulp test --citest --no-open
 ```
+Deploy your app<a name="deploy"></a>
+```bash
+$ gulp test --citest --no-open
+$ gulp --prod --no-serve
+# deploy to a path (configuration in /config/locationConfig.coffee)
+$ gulp deploy
+# deploy to S3 (configurtion in /config/s3Config.coffee)
+$ gulp deploy --target s3
+```
 
 ## Scripting
 Your choice of scripting languages.
 
+* **JavaScript**
 * **[Babel](https://babeljs.io/)**
 * **[CoffeeScript](coffeescript.org)**
 * **[LiveScript](livescript.net)**
-* **JavaScript**
 * **[TypeScript](http://www.typescriptlang.org/)**
 
 ## Styling
@@ -91,10 +111,12 @@ Your choice of templating engines.
   - Styles: `.less`, `.css`, `.scss`
   - Templates: `.html`, `.haml`, `.jade`
 
-**(Note: to keep the example succint, `.coffee`, `.html` and `.less` extension is used below. However, all of the file extensions listed above can be used, and even can be mixed-and-matched. )**
+**(Note: to keep the example succint, `.coffee`, `.html` and `.less` extensions are used below. However, all of the file extensions listed above can be used, and even can be mix-and-matched.)**
 
 The root directory generated for a fatarrow app:
 <pre>
+├──  e2e/
+├──  config/
 ├──  src/
 │   ├──  components/
 │   │   └──  comp/
@@ -116,25 +138,21 @@ The root directory generated for a fatarrow app:
 │   │   └──  angularjs.jpg
 │   └──  index.html
 ├──  tasks/
-├──  e2e/
-│   ├──  home/
-│   │   ├──  home.spec.coffee
-│   │   ├──  homePage.coffee
 ├──  bower_components/
 ├──  nodes_modules/
 ├──  .bowerrc
 ├──  .gitignore
 ├──  bower.json
 ├──  gulpfile.coffee
-├──  protractor.conf.coffee
 ├──  package.json
 </pre>
 
 Explanation of the folders:
-- *`app`*: Angular module for the app. All app level config should go here.
-- *`home`*: Each feature of the app should go in its own folder. It should contain all scripts, styles, templates and tests within the feature folder.
-- *`components`*: Reusable components (directives, factories, styles, etc.)
+- *`src/app`*: Angular module for the app. All app level config should go here.
+- *`src/home`*: Each feature of the app should go in its own folder. It should contain all scripts, styles, templates and tests within the feature folder.
+- *`src/components`*: Reusable components (directives, factories, styles, etc.)
 - *`e2e`*: Protractor tests. They should also be separated by features/components.
+- *`config`*: Configurtion for gulp tasks broken up by each task.
 
 ## Features
 - *Fake data*: Running `gulp` will include the `.backend.coffee` files and therefore Angular's $httpBackend will be utilized. This should be used for backendless development.
@@ -146,20 +164,37 @@ Explanation of the folders:
 	- *image minification*: images from teh `img` folder are compressed
 	- *rev*: minified files are rev'ed for browser cache busting
 	- *templatecache* : take all angular templates and include them in the minified scripts
+	- *deploy*: deploy to a path or to [AWS S3](http://aws.amazon.com/s3/). [see above](#deploy) for commands.
 - *Dev Workflow*:
 	- *watch* : watch your `src` folder and rebuild and reload automatically
-	- *linting* : lint `.js` and `.coffee` files
+	- *linting* : lint `.js` and `.coffee` files. style checking and fixing with [JSCS](http://jscs.info/)
 	- *test* : run e2e (protractor) and unit (karma) tests
 	- *[browserSync](http://www.browsersync.io/)* : test on multiple devices simultaneously
 	- *newer*: only process changed files
+	- *HTML5Mode*: [Angular's html5Mode](https://docs.angularjs.org/guide/$location) is supported on the BrowserSync server. Be sure to [configure your production web server](https://docs.angularjs.org/guide/$location). HTMO5Mode is turned on by default. See Angular's documentation to turn it off for browser compatibility.
+	- *plato*: perform code visualization, static analysis, and complexity analysis
+    - *update notifications*: yeoman scaffolded projects will get notifications and instructions on upgrading the project
 
 ## Configuration<a name="conf"></a>
-### `config.coffee`
-- *`APP_NAME`*: name of the angular module for the app
-- *`BOWER_COMPONENTS`*: consume dependencies from bower by specifying dependency name, version, dependency type (scripts, styles, etc.) and a list of files to be consumed (cherry picking files).
-- *`LANGUAGES`*: disable compilers not in use to optimize your build
-- *`PROXY_CONFIG`*: [connect-modrewrite](https://www.npmjs.com/package/connect-modrewrite) config to proxy api calls during development.
+**(Note: Configuration for all gulp plug-ins lives in the `config` folder.)**
+- *app.coffee*
+	- *`APP_NAME`*: name of the angular module for the app
+- *bower.coffee*
+	- *`BOWER_COMPONENTS`*: consume dependencies from bower by specifying dependency name, version, dependency type (scripts, styles, etc.) and a list of files to be consumed (cherry picking files).
+- *coffeeLint.coffee*: options for linting CoffeeScript. [See reference](http://www.coffeelint.org/#options)
+- *e2e.coffee*: options for protractor. [See reference](https://github.com/angular/protractor/blob/master/docs/referenceConf.js).
+- *jscs.coffee*: options for JSCS. [See reference](http://jscs.info/rules.html)
+- *jsHint.coffee*: options for jsHint. [See reference](http://jshint.com/docs/options/)
+- *karma.coffee*: options for karma. [See reference](http://karma-runner.github.io/0.8/config/configuration-file.html)
+- *languages.coffee*: disable compilers not in use to optimize your build
+- *less.coffee*: options for the less compiler. [See reference](http://lesscss.org/usage/)
+- *locationDeploy.coffee*: deploy app to a path
+- *plato.coffee*: options for plato. [See reference](https://github.com/es-analysis/plato)
+- *s3Deploy.coffee*: options to deploy to AWS S3. [See reference](https://www.npmjs.com/package/s3)
 - *`SCRIPTS`*: load order for scripts
+- *server.coffee*: options for browser-sync development server
+	- *`PROXY_CONFIG`*: proxy backend calls during development with connect-modrewrite. [See reference](https://www.npmjs.com/package/connect-modrewrite)
+	- *`PORT`*: run app on a specific port (default: 8181)
 - *`STYLES`*: load order for styles
 
 ### Add Bower Component
@@ -204,14 +239,14 @@ See [CHANGELOG.md](CHANGELOG.md)
 See [LICENSE](LICENSE)
 
 
-[build-image]:            http://img.shields.io/travis/CaryLandholt/generator-fatarrow.svg?style=flat
-[build-url]:              http://travis-ci.org/CaryLandholt/generator-fatarrow
+[build-image]:            http://img.shields.io/travis/CaryLandholt/fatarrow.svg?style=flat
+[build-url]:              http://travis-ci.org/CaryLandholt/fatarrow
 
-[dependencies-image]:     http://img.shields.io/gemnasium/CaryLandholt/generator-fatarrow.svg?style=flat
-[dependencies-url]:       https://gemnasium.com/CaryLandholt/generator-fatarrow
+[dependencies-image]:     http://img.shields.io/gemnasium/CaryLandholt/fatarrow.svg?style=flat
+[dependencies-url]:       https://gemnasium.com/CaryLandholt/fatarrow
 
 [license-image]:          http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]:            LICENSE
 
-[version-image]:          http://img.shields.io/npm/v/generator-fatarrow.svg?style=flat
-[version-url]:            https://npmjs.org/package/generator-fatarrow
+[version-image]:          http://img.shields.io/github/tag/CaryLandholt/fatarrow.svg?style=flat
+[version-url]:            https://github.com/CaryLandholt/fatarrow/tags

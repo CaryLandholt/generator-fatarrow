@@ -2,6 +2,7 @@ _      = require 'underscore'
 chalk  = require 'chalk'
 logo   = require 'fatarrow-ascii-art'
 path   = require 'path'
+pkg    = require '../package.json'
 yeoman = require 'yeoman-generator'
 
 Base  = yeoman.generators.Base
@@ -93,24 +94,47 @@ class Generator extends Base
 			]
 		]
 
-		hasFeature = (features, feature) ->
-			features.indexOf(feature) isnt -1
+		upgradePrompt = [
+			name    : 'upgrade'
+			message : 'It looks like you are upgrading your project. Continue?'
+			type    : 'confirm'
+		]
 
-		@prompt prompts, (props) =>
-			@appdescription          = props.appdescription
-			@appname                 = props.appname
-			@includeTwitterBootstrap = true
-			@includeExamples         = props.includeExamples
-			@scriptLanguages         = props.scriptLanguages
-			@styleLanguages          = props.styleLanguages
-			@templateLanguages       = props.templateLanguages
+		@isUpgrade = !!@config.get 'version'
 
-			@config.set 'appname', @appname
-			@config.save()
+		if @isUpgrade
+			@prompt upgradePrompt, (props) =>
+				done() if !!props.upgrade
+				@appdescription          = @config.get 'appdescription'
+				@appname                 = @config.get 'appname'
+				@scriptLanguages         = @config.get 'scriptLanguages'
+				@styleLanguages          = @config.get 'styleLanguages'
+				@templateLanguages       = @config.get 'templateLanguages'
+		else
+			@prompt prompts, (props) =>
+				@appdescription          = props.appdescription
+				@appname                 = props.appname
+				@includeTwitterBootstrap = true
+				@includeExamples         = props.includeExamples
+				@scriptLanguages         = props.scriptLanguages
+				@styleLanguages          = props.styleLanguages
+				@templateLanguages       = props.templateLanguages
 
-			done()
+				unless @config.get 'appname'
+					@config.set 'appname', @appname
+					@config.set 'appdescription', @appdescription
+					@config.set 'scriptLanguages', @scriptLanguages
+					@config.set 'styleLanguages', @styleLanguages
+					@config.set 'templateLanguages', @templateLanguages
+					@config.set 'version', pkg.version
+
+					@config.save()
+
+				done()
 
 	scaffold: ->
+		return if @config.get 'appname'
+
 		includeCoffeeScript = _.some @scriptLanguages, (x) -> x is 'coffeeScript'
 		if @includeExamples
 			if includeCoffeeScript
@@ -133,9 +157,11 @@ class Generator extends Base
 		@copy '_README.md', 'README.md'
 
 	config: ->
+		return if @isUpgrade
 		@directory 'config', 'config'
 
 	bower: ->
+		return if @isUpgrade
 		@copy 'bowerrc', '.bowerrc'
 
 	gulp: ->
