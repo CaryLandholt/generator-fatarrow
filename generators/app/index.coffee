@@ -2,31 +2,30 @@ _      = require 'underscore'
 chalk  = require 'chalk'
 logo   = require 'fatarrow-ascii-art'
 path   = require 'path'
+pkg    = require '../../package.json'
 yeoman = require 'yeoman-generator'
 
 Base  = yeoman.generators.Base
 check = chalk.green '✓'
 
 class Generator extends Base
-	init: ->
+	initializing: ->
 		@pkg = require '../../package.json'
+		@npmInstall()
 
-		@on 'end', ->
-			cb = =>
-				@log()
-				@log logo
-				@log()
-				@log chalk.magenta "Just type 'gulp' to fire up '#{@appname}'!"
-				@log()
-
-			@installDependencies callback: cb unless @options['skip-install']
+	end: ->
+		@log()
+		@log logo
+		@log()
+		@log chalk.magenta "Just type 'gulp' to fire up '#{@appname}'!"
+		@log()
 
 	splash: ->
 		@log logo
 		@log chalk.magenta 'Get ready to create your fatarrow app!'
 		@log()
 
-	askFor: ->
+	prompting: ->
 		done = @async()
 
 		prompts = [
@@ -89,27 +88,53 @@ class Generator extends Base
 				name    : 'Jade'
 				checked : false
 			,
-				value   : 'makdown'
+				value   : 'markdown'
 				name    : 'Markdown'
 				checked : false
 			]
 		]
 
-		hasFeature = (features, feature) ->
-			features.indexOf(feature) isnt -1
+		upgradePrompt = [
+			name    : 'upgrade'
+			message : 'It looks like you are upgrading your project. Continue?'
+			type    : 'confirm'
+		]
 
-		@prompt prompts, (props) =>
-			@appdescription          = props.appdescription
-			@appname                 = props.appname
-			@includeTwitterBootstrap = true
-			@includeExamples         = props.includeExamples
-			@scriptLanguages         = props.scriptLanguages
-			@styleLanguages          = props.styleLanguages
-			@templateLanguages       = props.templateLanguages
+		@isUpgrade = !!@config.get 'version'
 
-			done()
+		if @isUpgrade
+			@prompt upgradePrompt, (props) =>
+				done() if !!props.upgrade
+				@appdescription          = @config.get 'appdescription'
+				@appname                 = @config.get 'appname'
+				@scriptLanguages         = @config.get 'scriptLanguages'
+				@styleLanguages          = @config.get 'styleLanguages'
+				@templateLanguages       = @config.get 'templateLanguages'
+		else
+			@prompt prompts, (props) =>
+				@appdescription          = props.appdescription
+				@appname                 = props.appname
+				@includeTwitterBootstrap = true
+				@includeExamples         = props.includeExamples
+				@scriptLanguages         = props.scriptLanguages
+				@styleLanguages          = props.styleLanguages
+				@templateLanguages       = props.templateLanguages
+
+				unless @config.get 'appname'
+					@config.set 'appname', @appname
+					@config.set 'appdescription', @appdescription
+					@config.set 'scriptLanguages', @scriptLanguages
+					@config.set 'styleLanguages', @styleLanguages
+					@config.set 'templateLanguages', @templateLanguages
+					@config.set 'version', pkg.version
+
+					@config.save()
+
+				done()
 
 	scaffold: ->
+		return if @config.get 'appname'
+
 		includeCoffeeScript = _.some @scriptLanguages, (x) -> x is 'coffeeScript'
 		if @includeExamples
 			if includeCoffeeScript
@@ -124,8 +149,6 @@ class Generator extends Base
 			else
 				@directory 'javascript/src', 'src', true
 
-		@log 'includeCoffeeScript', includeCoffeeScript
-
 		if includeCoffeeScript
 			@directory 'coffeescript/e2e', 'e2e', true
 		else
@@ -134,14 +157,15 @@ class Generator extends Base
 		@copy '_README.md', 'README.md'
 
 	config: ->
-		@template '_config.coffee', 'config.coffee'
-		@copy '_protractor.config.coffee', 'protractor.config.coffee'
-
+		return if @isUpgrade
+		@directory 'config', 'config'
 
 	bower: ->
+		return if @isUpgrade
 		@copy 'bowerrc', '.bowerrc'
 
 	gulp: ->
+		@directory 'tasks', 'tasks'
 		@copy 'gulpfile.coffee', 'gulpfile.coffee'
 
 	npm: ->
@@ -153,11 +177,11 @@ class Generator extends Base
 			includeBabel         : _.some @scriptLanguages, (x) -> x is 'babel'
 			includeTypeScript    : _.some @scriptLanguages, (x) -> x is 'typeScript'
 			includeLiveScript    : _.some @scriptLanguages, (x) -> x is 'liveScript'
-			includeLess          : _.some @scriptLanguages, (x) -> x is 'less'
-			includeSass          : _.some @scriptLanguages, (x) -> x is 'sass'
-			includeHaml          : _.some @scriptLanguages, (x) -> x is 'haml'
-			includeJade          : _.some @scriptLanguages, (x) -> x is 'jade'
-			includeMarkdown      : _.some @scriptLanguages, (x) -> x is 'markdown'
+			includeLess          : _.some @styleLanguages, (x) -> x is 'less'
+			includeSass          : _.some @styleLanguages, (x) -> x is 'sass'
+			includeHaml          : _.some @templateLanguages, (x) -> x is 'haml'
+			includeJade          : _.some @templateLanguages, (x) -> x is 'jade'
+			includeMarkdown      : _.some @templateLanguages, (x) -> x is 'markdown'
 
 		@template '_package.json', 'package.json', context
 

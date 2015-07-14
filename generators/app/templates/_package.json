@@ -1,6 +1,6 @@
 {
   "name": "<%= appname %>",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "<%= appdescription %>",
   "author": {
     "name": "Cary Landholt",
@@ -19,53 +19,68 @@
     "bower": "^1.3.5",
     "browser-sync": "^2.5.2",
     "coffee-script": "^1.7.1",
-    "conventional-changelog": "0.0.11",
+    "connect-modrewrite": "^0.8.1",
+    "conventional-changelog": "0.0.17",
+    "del": "^1.2.0",
     "event-stream": "^3.1.5",
     "gulp": "^3.8.5",
     "gulp-angular-templatecache": "^1.2.1",
     <% if(includeBabel) { %>"gulp-babel": "^5.1.0",<% } %>
     <% if(includeCoffeeScript) { %>
     "gulp-coffee": "^2.0.1",
-    "gulp-coffeelint": "0.4.0",
+    "gulp-coffeelint": "0.5.0",
     <% } %>
     "gulp-concat": "^2.4.2",
-    "gulp-flatten": "0.0.4",
+    "gulp-flatten": "0.1.0",
     <% if(includeHaml) { %>"gulp-haml": "0.1.1",<% } %>
     "gulp-if": "^1.2.5",
     "gulp-imagemin": "^2.0.0",
-    <% if(includeHaml) { %>"gulp-jade": "0.10.0",<% } %>
+    <% if(includeJade) { %>"gulp-jade": "1.0.1",<% } %>
     "gulp-jshint": "^1.6.3",
-    "gulp-less": "^3.0.0",
+    "gulp-jscs": "^1.6.0",
+    "gulp-less": "^3.0.3",
     <% if(includeLiveScript) { %>"gulp-livescript": "^2.2.1",<% } %>
     "gulp-load-plugins": "^0.10.0",
     <% if(includeMarkdown) { %>"gulp-markdown": "^1.0.0",<% } %>
-    "gulp-minify-css": "0.3.11",
-    "gulp-minify-html": "0.1.7",
+    "gulp-minify-css": "^1.2.0",
+    "gulp-minify-html": "^1.0.3",
     "gulp-newer": "^0.5.0",
-    "gulp-ng-annotate": "0.4.3",
+    "gulp-ng-annotate": "^1.0.0",
     <% if(includeCoffeeScript) { %>"gulp-ng-classify": "^4.0.0",<% } %>
-    "gulp-plato": "^1.0.0",
     "gulp-protractor": "^1.0.0",
-    "gulp-rev": "^2.0.1",
-    "gulp-rimraf": "0.1.1",
-    <% if(includeSass) { %>"gulp-sass": "^1.0.0",<% } %>
+    "gulp-rev": "^5.1.0",
+    <% if(includeSass) { %>"gulp-sass": "^2.0.3",<% } %>
     "gulp-sourcemaps": "^1.1.0",
-    "gulp-template": "^1.0.0",
+    "gulp-template": "^3.0.0",
     <% if(includeTypeScript) { %>"gulp-typescript": "^2.0.0",<% } %>
     "gulp-uglify": "^1.0.1",
     "gulp-util": "^3.0.0",
-    "karma": "0.12.28",
-    "karma-jasmine": "0.3.2",
+    "jasmine-reporters": "^2.0.6",
+    "karma": "0.12.37",
+    "karma-coverage": "^0.4.2",
+    "karma-jasmine": "0.3.6",
+    "karma-junit-reporter": "^0.3.1",
     "karma-ng-html2js-preprocessor": "0.1.2",
-    "karma-phantomjs-launcher": "0.1.4",
-    "karma-spec-reporter": "0.0.13",
+    "karma-phantomjs-launcher": "0.2.0",
+    "karma-spec-reporter": "0.0.20",
+    "node-notifier": "^4.2.3",
     "phantomjs": "^1.9.7-15",
-    "proxy-middleware": "^0.11.0",
-    "q": "^2.0.2",
-    "yargs": "^1.2.6"
+    "plato": "^1.5.0",
+    "q": "^1.4.1",
+    "s3": "^4.4.0",
+    "shelljs": "^0.5.1",
+    "update-notifier": "^0.5.0",
+    "yargs": "^3.13.0"
   },
   "scripts": {
+    "dev": "gulp --no-serve --no-specs",
+    "prod": "gulp --prod --no-serve",
+    "predeploy": "npm test && npm run prod",
+    "deploy": "gulp deploy",
+    "predevdeploy": "npm test && npm run dev",
+    "devdeploy": "gulp deploy",
     "postinstall": "gulp e2e-driver-update",
-    "test": "gulp test --no-open --citest"
+    "test": "gulp test --no-open --citest",
+    "posttest": "gulp clean && gulp clean:working"
   }
 }

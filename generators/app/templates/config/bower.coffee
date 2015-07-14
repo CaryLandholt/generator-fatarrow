@@ -1,5 +1,3 @@
-APP_NAME = 'app'
-
 BOWER_COMPONENTS =
 	'angular': '1.3.8':
 		scripts: 'angular.min.js'
@@ -21,30 +19,4 @@ BOWER_COMPONENTS =
 	'showdown': '0.3.1':
 		scripts: 'src/showdown.js'
 
-LANGUAGES =
-	SCRIPTS: <%= JSON.stringify(scriptLanguages) %>
-	STYLES: <%= JSON.stringify(styleLanguages) %>
-	VIEWS: <%= JSON.stringify(templateLanguages) %>
-
-PROXY_CONFIG = [
-	route: '/api'
-	url: 'http://localhost:8182/api'
-]
-
-SCRIPTS = [
-	'**/angular.min.js'
-	'**/angular-animate.min.js'
-	'**/angular-mocks.js'
-	'**/angular-route.min.js'
-	'**/loading-bar.min.js'
-	'**/app.js'
-	'**/*.js'
-]
-
-STYLES = [
-	'**/bootstrap.min.css'
-	'**/bootstrap-theme.min.css'
-	'**/*.css'
-]
-
-module.exports = {APP_NAME, BOWER_COMPONENTS, LANGUAGES, PROXY_CONFIG, SCRIPTS, STYLES}
+module.exports = {BOWER_COMPONENTS}
