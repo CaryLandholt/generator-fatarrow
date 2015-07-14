@@ -2,7 +2,7 @@ _      = require 'underscore'
 chalk  = require 'chalk'
 logo   = require 'fatarrow-ascii-art'
 path   = require 'path'
-pkg    = require '../package.json'
+pkg    = require '../../package.json'
 yeoman = require 'yeoman-generator'
 
 Base  = yeoman.generators.Base
