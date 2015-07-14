@@ -43,4 +43,4 @@ module.exports = ->
 				modRewrite modRewriteConfig
 			]
 	, ->
-		firstRun = false
+		require('../options').firstRun = false

@@ -11,6 +11,8 @@ check = chalk.green '✓'
 class Generator extends Base
 	initializing: ->
 		@pkg = require '../../package.json'
+
+	install: ->
 		@npmInstall()
 
 	end: ->
@@ -110,6 +112,7 @@ class Generator extends Base
 				@scriptLanguages         = @config.get 'scriptLanguages'
 				@styleLanguages          = @config.get 'styleLanguages'
 				@templateLanguages       = @config.get 'templateLanguages'
+				done()
 		else
 			@prompt prompts, (props) =>
 				@appdescription          = props.appdescription
@@ -120,20 +123,18 @@ class Generator extends Base
 				@styleLanguages          = props.styleLanguages
 				@templateLanguages       = props.templateLanguages
 
-				unless @config.get 'appname'
-					@config.set 'appname', @appname
-					@config.set 'appdescription', @appdescription
-					@config.set 'scriptLanguages', @scriptLanguages
-					@config.set 'styleLanguages', @styleLanguages
-					@config.set 'templateLanguages', @templateLanguages
-					@config.set 'version', pkg.version
+				@config.set 'appname', @appname
+				@config.set 'appdescription', @appdescription
+				@config.set 'scriptLanguages', @scriptLanguages
+				@config.set 'styleLanguages', @styleLanguages
+				@config.set 'templateLanguages', @templateLanguages
+				@config.set 'version', pkg.version
 
-					@config.save()
-
+				@config.save()
 				done()
 
 	scaffold: ->
-		return if @config.get 'appname'
+		return if @isUpgrade
 
 		includeCoffeeScript = _.some @scriptLanguages, (x) -> x is 'coffeeScript'
 		if @includeExamples
