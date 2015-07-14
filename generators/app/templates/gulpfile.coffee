@@ -1,8 +1,11 @@
-gulp                  = require 'gulp'
-yargs                 = require 'yargs'
+gulp               = require 'gulp'
+yargs              = require 'yargs'
 
-{BOWER_COMPONENTS, LANGUAGES, PROXY_CONFIG, SCRIPTS, STYLES} = require './config'
-{getBower, isProd, useBackendless, rune2e, runServer, runSpecs, runWatch, showHelp} = require './tasks/options'
+{SCRIPTS}          = require './config/scripts'
+{STYLES}           = require './config/styles'
+{BOWER_COMPONENTS} = require './config/bower'
+{LANGUAGES}        = require './config/languages'
+{getBower, isProd, useBackendless, rune2e, runServer, runSpecs, runWatch, showHelp, target} = require './tasks/options'
 
 plugins = require './tasks/plugins'
 
@@ -37,10 +40,13 @@ gulp.task 'css', ['prepare'], taskRequire './tasks/styles/css'
 # Default build
 gulp.task 'default', [].concat(if runServer then ['server'] else ['build']).concat(if runWatch then ['watch'] else []).concat(if runSpecs then ['test'] else []).concat(if showHelp then ['help'] else [])
 
+# Deploy
+gulp.task 'locationDeploy', taskRequire './tasks/deploy/locationDeploy'
+gulp.task 's3Deploy', taskRequire './tasks/deploy/s3Deploy'
+gulp.task 'deploy', [].concat(if target is 's3' then ['s3Deploy'] else ['locationDeploy'])
+
 # Execute E2E tests
 gulp.task 'e2e', ['server'], taskRequire './tasks/test/e2e'
-gulp.task 'protractor', taskRequire './tasks/test/e2e'
-
 gulp.task 'protractor', taskRequire './tasks/test/e2e'
 
 # Update E2E driver

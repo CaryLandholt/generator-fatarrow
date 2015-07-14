@@ -105,6 +105,9 @@ class Generator extends Base
 			@styleLanguages          = props.styleLanguages
 			@templateLanguages       = props.templateLanguages
 
+			@config.set 'appname', @appname
+			@config.save()
+
 			done()
 
 	scaffold: ->
@@ -130,9 +133,7 @@ class Generator extends Base
 		@copy '_README.md', 'README.md'
 
 	config: ->
-		@template '_config.coffee', 'config.coffee'
-		@copy '_protractor.config.coffee', 'protractor.config.coffee'
-
+		@directory 'config', 'config'
 
 	bower: ->
 		@copy 'bowerrc', '.bowerrc'

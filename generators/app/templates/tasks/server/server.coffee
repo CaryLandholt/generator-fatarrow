@@ -1,11 +1,10 @@
 modRewrite = require 'connect-modrewrite'
 url = require 'url'
 browserSync = require 'browser-sync'
-{PROXY_CONFIG} = require '../../config'
+{PROXY_CONFIG, PORT} = require '../../config/server'
 {DIST_DIRECTORY} = require '../constants'
 {open} = require '../options'
 {FONTS, IMAGES, SCRIPTS, SOURCEMAPS, STYLES, VIEWS} = require '../extensions'
-PORT = 8181
 
 extensions = []
 	.concat FONTS.COMPILED
@@ -25,12 +24,15 @@ expression = extensions
 module.exports = ->
 	return if browserSync.active
 
-	modRewriteConfig = [
+	html5ModeConfig = [
 		'^/img/.*$ - [L]'
 		'^/fonts/.*$ - [L]'
 		"^(#{expression})$ - [L]"
 		'^.*$ /index.html [L]'
-	].concat PROXY_CONFIG
+	]
+
+	modRewriteConfig = PROXY_CONFIG
+		.concat html5ModeConfig
 
 	browserSync
 		open: open

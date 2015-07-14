@@ -1,10 +1,10 @@
-/* jshint ignore:start */
+//jscs:disable
 angular.module('app', [
 	'ngAnimate',
 	'ngRoute',
-	<% if (useBackendless) { %>
+	<%% if (useBackendless) { %>
 	'ngMockE2E',
-	<% } %>
+	<%% } %>
 	'angular-loading-bar'
+
 ]);
-/* jshint ignore:end */

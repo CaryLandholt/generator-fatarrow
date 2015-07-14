@@ -1,38 +1,20 @@
 es                    = require 'event-stream'
 getScriptSources      = require('../utils').getScriptSources
-lintNotify          = require './reporters/lintNotify'
+lintNotify            = require './reporters/lintNotify'
 {COMPONENTS_DIRECTORY,
 	TEMP_DIRECTORY,
 	SRC_DIRECTORY}    = require '../constants'
-PREDEFINED_GLOBALS = [
-	'angular'
-	'beforeEach'
-	'describe'
-	'it'
-]
+{jsHint} = require '../../config/jsHint'
+{jscs} = require '../../config/jscs'
+
 templateOptions       = require '../templateOptions'
 
 module.exports = (gulp, plugins) -> ->
 	{onError} = require('../events') plugins
-	options =
-		jsHint:
-			camelcase: true
-			curly: true
-			eqeqeq: true
-			forin: true
-			freeze: true
-			immed: true
-			indent: 1
-			latedef: true
-			newcap: true
-			noarg: true
-			noempty: true
-			nonbsp: true
-			nonew: true
-			plusplus: true
-			undef: true
-			unused: true
-			predef: PREDEFINED_GLOBALS
+	options = {
+		jsHint
+		jscs
+	}
 
 	sources = getScriptSources '.js'
 	srcs    = []
@@ -43,6 +25,12 @@ module.exports = (gulp, plugins) -> ->
 			.on 'error', onError
 
 			.pipe plugins.template templateOptions
+			.on 'error', onError
+
+			.pipe plugins.jscs options.jscs
+			.on 'error', onError
+
+			.pipe lintNotify 'jscs'
 			.on 'error', onError
 
 			.pipe plugins.jshint options.jsHint
