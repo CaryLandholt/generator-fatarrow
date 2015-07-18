@@ -159,6 +159,8 @@ class Generator extends Base
 
 	config: ->
 		return if @isUpgrade
+		@copy 'jscsrc', '.jscsrc'
+		@copy 'jshintrc', '.jshintrc'
 		@directory 'config', 'config'
 
 	bower: ->

@@ -34,7 +34,6 @@
     "gulp-flatten": "0.1.0",
     <% if(includeHaml) { %>"gulp-haml": "0.1.1",<% } %>
     "gulp-if": "^1.2.5",
-    "gulp-imagemin": "^2.0.0",
     <% if(includeJade) { %>"gulp-jade": "1.0.1",<% } %>
     "gulp-jshint": "^1.6.3",
     "gulp-jscs": "^1.6.0",
