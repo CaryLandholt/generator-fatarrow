@@ -2,7 +2,7 @@
 	DIST_DIRECTORY}  = require '../constants'
 
 module.exports = (gulp, plugins) -> ->
-	config   = require '../../config/locationDeploy.coffee'
+	config   = require '../../config/locationConfig.json'
 	{onError} = require('../events') plugins
 	sources   = '**'
 	gulp
