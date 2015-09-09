@@ -10,6 +10,7 @@ templateOptions       = require '../templateOptions'
 module.exports = (gulp, plugins) -> ->
 	{onError} = require('../events') plugins
 
+
 	sources = getScriptSources '.js'
 	srcs    = []
 

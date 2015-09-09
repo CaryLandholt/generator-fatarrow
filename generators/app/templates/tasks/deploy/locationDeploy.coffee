@@ -1,8 +1,8 @@
-config   = require '../../config/locationDeploy.coffee'
 {SRC_DIRECTORY,
 	DIST_DIRECTORY}  = require '../constants'
 
 module.exports = (gulp, plugins) -> ->
+	config   = require '../../config/locationDeploy.coffee'
 	{onError} = require('../events') plugins
 	sources   = '**'
 	gulp
