@@ -1,20 +1,15 @@
 notify         = require('../utils').notify
 updateNotifier = require 'update-notifier'
 shell          = require 'shelljs'
+yorc = require '../../.yo-rc.json'
 
 module.exports = ->
-	globals = shell.exec 'npm ls -g --depth=0 --json', { silent: true }
-		.output
-
-	packageInfo = JSON.parse globals
-		.dependencies['generator-fatarrow']
-
-	return unless packageInfo
+	return unless yorc
 
 	notifier = updateNotifier
 		pkg:
 			name: 'generator-fatarrow'
-			version: packageInfo.version
+			version: yorc['generator-fatarrow'].version
 		updateCheckInterval: 1000 * 60 * 60 * 24
 
 	notifier.notify()
