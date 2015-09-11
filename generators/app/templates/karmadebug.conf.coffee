@@ -6,7 +6,8 @@ sources = []
 
 module.exports = (config) ->
 	config.set
-		basePath: 'dist'
+		autoWatchBatchDelay: 1000
+		basePath: '.temp'
 		browsers: [
 			'Chrome'
 		]
