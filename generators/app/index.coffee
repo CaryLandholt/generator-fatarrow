@@ -13,7 +13,10 @@ class Generator extends Base
 		@pkg = require '../../package.json'
 
 	install: ->
-		@npmInstall()
+		if @isUpgrade
+			@spawnCommand 'npm', ['update']
+		else
+			@npmInstall()
 
 	end: ->
 		@log()
@@ -106,12 +109,15 @@ class Generator extends Base
 
 		if @isUpgrade
 			@prompt upgradePrompt, (props) =>
+				console.log 'test'
 				done() if !!props.upgrade
 				@appdescription          = @config.get 'appdescription'
 				@appname                 = @config.get 'appname'
 				@scriptLanguages         = @config.get 'scriptLanguages'
 				@styleLanguages          = @config.get 'styleLanguages'
 				@templateLanguages       = @config.get 'templateLanguages'
+				@config.set 'version', pkg.version
+				@config.save()
 				done()
 		else
 			@prompt prompts, (props) =>
@@ -158,13 +164,14 @@ class Generator extends Base
 		@copy '_README.md', 'README.md'
 
 	config: ->
-		return if @isUpgrade
 		@copy 'jscsrc', '.jscsrc'
 		@copy 'jshintrc', '.jshintrc'
+		@copy 'karma.conf.coffee', 'karma.conf.coffee'
+		@copy 'karmadebug.conf.coffee', 'karmadebug.conf.coffee'
+		@copy 'protractor.conf.coffee', 'protractor.conf.coffee'
 		@directory 'config', 'config'
 
 	bower: ->
-		return if @isUpgrade
 		@copy 'bowerrc', '.bowerrc'
 
 	gulp: ->

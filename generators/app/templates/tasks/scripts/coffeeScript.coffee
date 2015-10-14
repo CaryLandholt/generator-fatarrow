@@ -2,11 +2,13 @@ es                    = require 'event-stream'
 getScriptSources      = require('../utils').getScriptSources
 lintNotify            = require './reporters/lintNotify'
 {COMPONENTS_DIRECTORY,
+	DIST_DIRECTORY,
 	TEMP_DIRECTORY,
 	SRC_DIRECTORY}    = require '../constants'
 templateOptions       = require '../templateOptions'
 {ngClassifyOptions}   = require '../options'
 {coffeeLint}          = require '../../config/coffeeLint'
+
 
 module.exports = (gulp, plugins) -> ->
 	{onError} = require('../events') plugins
@@ -24,9 +26,6 @@ module.exports = (gulp, plugins) -> ->
 			.src sources, {cwd: SRC_DIRECTORY, nodir: true}
 			.on 'error', onError
 
-			.pipe lintNotify 'coffeelint'
-			.on 'error', onError
-
 			.pipe plugins.template templateOptions
 			.on 'error', onError
 
@@ -34,6 +33,9 @@ module.exports = (gulp, plugins) -> ->
 			.on 'error', onError
 
 			.pipe plugins.coffeelint coffeeLint
+			.on 'error', onError
+
+			.pipe lintNotify 'coffeelint'
 			.on 'error', onError
 
 			.pipe plugins.coffeelint.reporter 'default'
@@ -63,7 +65,7 @@ module.exports = (gulp, plugins) -> ->
 		.pipe plugins.coffee()
 		.on 'error', onError
 
-		.pipe plugins.sourcemaps.write './', options.sourceMaps
+		.pipe plugins.sourcemaps.write()
 		.on 'error', onError
 
 		.pipe gulp.dest TEMP_DIRECTORY

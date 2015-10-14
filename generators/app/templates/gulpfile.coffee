@@ -5,7 +5,7 @@ yargs              = require 'yargs'
 {STYLES}           = require './config/styles'
 {BOWER_COMPONENTS} = require './config/bower'
 {LANGUAGES}        = require './config/languages'
-{getBower, isProd, useBackendless, rune2e, runServer, runSpecs, runWatch, showHelp, target} = require './tasks/options'
+{getBower, isProd, useBackendless, runServer, runSpecs, runWatch, showHelp, target} = require './tasks/options'
 
 plugins = require './tasks/plugins'
 
@@ -18,7 +18,7 @@ gulp.task 'help', require('./tasks/help') gulp, plugins
 gulp.task 'babel', ['prepare'], taskRequire './tasks/scripts/babel'
 
 # Get components via Bower
-gulp.task 'bower', ['clean:bower'], taskRequire './tasks/bower/bower'
+gulp.task 'bower', taskRequire './tasks/bower/bower'
 
 # build the app
 gulp.task 'build', ['spa', 'fonts', 'images'], taskRequire './tasks/build'
@@ -46,8 +46,9 @@ gulp.task 's3Deploy', taskRequire './tasks/deploy/s3Deploy'
 gulp.task 'deploy', [].concat(if target is 's3' then ['s3Deploy'] else ['locationDeploy'])
 
 # Execute E2E tests
-gulp.task 'e2e', ['server'], taskRequire './tasks/test/e2e'
-gulp.task 'protractor', taskRequire './tasks/test/e2e'
+gulp.task 'protractor', taskRequire './tasks/test/protractor'
+gulp.task 'protractor:watch', ['protractor'], taskRequire './tasks/test/protractorWatch'
+gulp.task 'protractor:ci', ['serve'], taskRequire './tasks/test/protractorCI'
 
 # Update E2E driver
 gulp.task 'e2e-driver-update', plugins.protractor.webdriver_update
@@ -80,7 +81,8 @@ gulp.task 'javaScript', ['prepare'], taskRequire './tasks/scripts/javaScript'
 gulp.task 'karma', taskRequire './tasks/test/karma'
 
 # Compile Less
-gulp.task 'less', ['prepare'], taskRequire './tasks/styles/less'
+gulp.task 'copy:less', ['prepare'], taskRequire './tasks/styles/copyLess'
+gulp.task 'less', ['copy:less'], taskRequire './tasks/styles/less'
 
 # Compile LiveScript
 gulp.task 'liveScript', ['prepare'], taskRequire './tasks/scripts/liveScript'
@@ -89,10 +91,10 @@ gulp.task 'liveScript', ['prepare'], taskRequire './tasks/scripts/liveScript'
 gulp.task 'markdown', ['prepare'], taskRequire './tasks/views/markdown'
 
 # Normalize Bower components
-gulp.task 'normalizeComponents', ['bower'], taskRequire './tasks/bower/normalizeComponents'
+gulp.task 'normalizeComponents', ['clean:working'], taskRequire './tasks/bower/normalizeComponents'
 
 # Execute Plato complexity analysis
-gulp.task 'plato', ['scripts'], taskRequire './tasks/plato/plato'
+gulp.task 'plato', taskRequire './tasks/plato/plato'
 
 # Prepare for compilation
 gulp.task 'prepare', ['clean:working'].concat(if getBower then ['normalizeComponents'] else [])
@@ -125,7 +127,7 @@ gulp.task 'styles', ['css'].concat(LANGUAGES.STYLES), taskRequire './tasks/style
 gulp.task 'templateCache', ['html'].concat(LANGUAGES.VIEWS), taskRequire './tasks/views/templateCache'
 
 # Execute unit tests
-gulp.task 'test', [].concat(if rune2e then ['e2e'] else ['build']), taskRequire './tasks/test/test'
+gulp.task 'test', [].concat(['build']), taskRequire './tasks/test/test'
 gulp.task 'unittest', [].concat(['spa']), taskRequire './tasks/test/test'
 
 # Compile TypeScript
